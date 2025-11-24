@@ -8,9 +8,12 @@ import './ChatMessage.css'
 
 interface ChatMessageProps {
   message: Message
+  onRegenerate?: () => void
+  onCopy?: () => void
+  onShare?: () => void
 }
 
-export default function ChatMessage({ message }: ChatMessageProps) {
+export default function ChatMessage({ message, onRegenerate, onCopy, onShare }: ChatMessageProps) {
   const isUser = message.role === 'user'
   const [displayedContent, setDisplayedContent] = useState('')
 
@@ -51,22 +54,49 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           <img src={jeffProfile} alt="AI Assistant" className="avatar-image" />
         )}
       </div>
-      <div className="message-content">
-        {message.isLoading ? (
-          <LoadingDots />
-        ) : isUser ? (
-          <p>{message.content}</p>
-        ) : (
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {displayedContent}
-          </ReactMarkdown>
-        )}
-        <div className="message-timestamp">
-          {message.timestamp.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          })}
+      <div className="message-content-wrapper">
+        <div className="message-content">
+          {message.isLoading ? (
+            <LoadingDots />
+          ) : isUser ? (
+            <p>{message.content}</p>
+          ) : (
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {displayedContent}
+            </ReactMarkdown>
+          )}
+          <div className="message-timestamp">
+            {message.timestamp.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </div>
         </div>
+        {!isUser && !message.isLoading && (
+          <div className="message-actions">
+            <button
+              className="action-button"
+              onClick={onRegenerate}
+              title="Regenerate response"
+            >
+              ⟳
+            </button>
+            <button
+              className="action-button"
+              onClick={onCopy}
+              title="Copy to clipboard"
+            >
+              📋
+            </button>
+            <button
+              className="action-button"
+              onClick={onShare}
+              title="Share message"
+            >
+              ↗
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
