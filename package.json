@@ -1,0 +1,20 @@
+{
+  "name": "aparavi-epstein-files",
+  "version": "1.0.0",
+  "description": "Aparavi pipeline chat application",
+  "private": true,
+  "scripts": {
+    "start": "pnpm build && concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./jeffspeaksnode start\" \"pnpm --filter ./jeffspeaksui preview\"",
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./jeffspeaksnode dev\" \"pnpm --filter ./jeffspeaksui dev\"",
+    "build": "pnpm --filter ./jeffspeaksnode build && pnpm --filter ./jeffspeaksui build",
+    "install:all": "pnpm install --filter ./jeffspeaksnode --filter ./jeffspeaksui"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
+

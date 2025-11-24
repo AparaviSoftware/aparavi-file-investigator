@@ -1,0 +1,147 @@
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+  
+  .app-header {
+    padding: 2rem 2rem 1.5rem 2rem;
+    border-bottom: none;
+    background: transparent;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .app-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #191919;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  
+  .header-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    gap: 1rem;
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #4a4a4a;
+    font-weight: 400;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .header-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .header-button {
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: #191919;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .header-button:hover {
+    background: #f5f5f5;
+    border-color: #b8b8b8;
+  }
+
+  .back-button {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: #191919;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .back-button:hover {
+    background: #f5f5f5;
+    border-color: #b8b8b8;
+  }
+  
+  .chat-container {
+    flex: 1;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 1.5rem;
+    margin: 0 1rem;
+  }
+  
+  .messages {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: 100%;
+  }
+  
+  /* Scrollbar styling */
+  .chat-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .chat-container::-webkit-scrollbar-track {
+    background: rgba(248, 248, 248, 0.7);
+  }
+  
+  .chat-container::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    border-radius: 4px;
+  }
+  
+  .chat-container::-webkit-scrollbar-thumb:hover {
+    background: #b8b8b8;
+  }
+  
+  @media (max-width: 768px) {
+    .app-header {
+      padding: 1rem 1.5rem;
+    }
+  
+    .app-header h1 {
+      font-size: 1.25rem;
+    }
+
+    .header-bottom {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .header-buttons {
+      width: 100%;
+      justify-content: flex-start;
+    }
+  
+    .messages {
+      padding: 1rem;
+      gap: 1rem;
+    }
+  }
