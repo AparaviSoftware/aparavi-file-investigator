@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Message } from '../types'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -11,6 +12,33 @@ interface ChatMessageProps {
 
 export default function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user'
+  const [displayedContent, setDisplayedContent] = useState('')
+
+  useEffect(() => {
+    // Only apply typewriter effect to new assistant messages with animate flag
+    if (!isUser && !message.isLoading && message.animate) {
+      setDisplayedContent('')
+
+      // Split content into words while preserving spaces and newlines
+      const words = message.content.split(/(\s+)/)
+      let currentWordIndex = 0
+      const typingSpeed = 50 // milliseconds per word
+
+      const interval = setInterval(() => {
+        if (currentWordIndex < words.length) {
+          setDisplayedContent(words.slice(0, currentWordIndex + 1).join(''))
+          currentWordIndex++
+        } else {
+          clearInterval(interval)
+        }
+      }, typingSpeed)
+
+      return () => clearInterval(interval)
+    } else {
+      // For user messages or non-animated messages, show immediately
+      setDisplayedContent(message.content)
+    }
+  }, [message.content, message.isLoading, message.animate, isUser])
 
   return (
     <div
@@ -30,7 +58,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           <p>{message.content}</p>
         ) : (
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {message.content}
+            {displayedContent}
           </ReactMarkdown>
         )}
         <div className="message-timestamp">

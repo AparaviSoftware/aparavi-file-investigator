@@ -46,8 +46,12 @@
   }
   
   .message-content {
-    flex: 1;
+    max-width: 75%;
     min-width: 0;
+  }
+
+  .message-user {
+    justify-content: flex-end;
   }
   
   .message-user .message-content {
@@ -73,7 +77,7 @@
   .message-error .message-content {
     color: #c41e3a;
   }
-  
+
   .message-content p {
     margin: 0 0 0.5rem 0;
     line-height: 1.6;
@@ -134,6 +138,23 @@
     margin-top: 0.5rem;
     font-size: 0.75rem;
     color: #9b9b9b;
+  }
+
+  /* Typing effect */
+  .typing-cursor {
+    display: inline-block;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
+    color: #826c5c;
+  }
+
+  @keyframes blink {
+    0%, 50% {
+      opacity: 1;
+    }
+    51%, 100% {
+      opacity: 0;
+    }
   }
   
   @media (max-width: 768px) {
