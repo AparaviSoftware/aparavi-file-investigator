@@ -21,7 +21,7 @@ A full-stack chat interface for interacting with Aparavi data pipelines. This mo
 This application provides a clean, Claude-inspired chat interface for interacting with Aparavi data pipeline webhooks. The system consists of two main components:
 
 - **jeffspeaksui** - React frontend with Vite (runs on port 3000)
-- **jeffspeaksnode** - TypeScript/Express backend proxy (runs on port 3001)
+- **app** - TypeScript/Express backend proxy (runs on port 3001)
 
 The backend acts as a secure proxy between the frontend and the Aparavi webhook, handling authentication, rate limiting, error handling, and response processing.
 
@@ -51,7 +51,7 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 - Manages conversation state
 - Communicates with backend via REST API
 
-**Backend (jeffspeaksnode)**
+**Backend (app)**
 - Validates and processes incoming requests
 - Handles authentication with Aparavi webhook
 - Implements rate limiting and security headers
@@ -78,7 +78,7 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 - **React Markdown** - Markdown rendering for responses
 - **CSS Modules** - Component-scoped styling
 
-### Backend (jeffspeaksnode)
+### Backend (app)
 - **Node.js** - Runtime environment
 - **Express** - Web framework
 - **TypeScript** - Type safety
@@ -112,7 +112,7 @@ aparavi-epstein-files/
 │   ├── vite.config.ts         # Vite configuration
 │   └── tsconfig.json
 │
-├── jeffspeaksnode/            # Backend Express server
+├── app/            # Backend Express server
 │   ├── src/
 │   │   ├── server.ts          # Main Express application
 │   │   ├── config/
@@ -163,16 +163,16 @@ brew install pnpm
 pnpm install
 ```
 
-This will install dependencies for both `jeffspeaksui` and `jeffspeaksnode` using pnpm workspaces.
+This will install dependencies for both `jeffspeaksui` and `app` using pnpm workspaces.
 
 ### 2. Configure Environment Variables
 
-#### Backend Configuration (`jeffspeaksnode/.env`)
+#### Backend Configuration (`app/.env`)
 
-Create a `.env` file in the `jeffspeaksnode` directory:
+Create a `.env` file in the `app` directory:
 
 ```bash
-cd jeffspeaksnode
+cd app
 cp .env.example .env  # If .env.example exists
 ```
 
@@ -267,7 +267,7 @@ You can also run services individually:
 
 **Backend only:**
 ```bash
-cd jeffspeaksnode
+cd app
 pnpm dev        # Development mode
 pnpm build      # Build TypeScript
 pnpm start      # Production mode
@@ -294,7 +294,7 @@ pnpm preview    # Preview production build
 
 ```bash
 # Check backend types
-cd jeffspeaksnode
+cd app
 pnpm type-check
 
 # Check frontend types
@@ -306,7 +306,7 @@ pnpm type-check
 
 ```bash
 # Lint backend
-cd jeffspeaksnode
+cd app
 pnpm lint
 
 # Lint frontend
@@ -324,7 +324,7 @@ pnpm build
 ```
 
 This will:
-- Compile TypeScript in `jeffspeaksnode` → `dist/`
+- Compile TypeScript in `app` → `dist/`
 - Build React app in `jeffspeaksui` → `dist/`
 
 ### Running Production Build
@@ -338,7 +338,7 @@ pnpm start
 #### Backend Only
 
 ```bash
-cd jeffspeaksnode
+cd app
 docker build -t aparavi-backend .
 docker run -p 3001:3001 --env-file .env aparavi-backend
 ```
@@ -346,7 +346,7 @@ docker run -p 3001:3001 --env-file .env aparavi-backend
 #### Using Docker Compose
 
 ```bash
-cd jeffspeaksnode
+cd app
 docker-compose up -d
 ```
 
@@ -465,7 +465,7 @@ Root endpoint with API information.
 **Solution**: Make sure `pnpm-workspace.yaml` exists in the root and contains:
 ```yaml
 packages:
-  - 'jeffspeaksnode'
+  - 'app'
   - 'jeffspeaksui'
 ```
 
@@ -473,7 +473,7 @@ packages:
 
 **Problem**: Required environment variables not set.
 
-**Solution**: Create `.env` file in `jeffspeaksnode/` with:
+**Solution**: Create `.env` file in `app/` with:
 ```env
 WEBHOOK_BASE_URL=your-url
 WEBHOOK_API_KEY=your-key
@@ -495,7 +495,7 @@ WEBHOOK_API_KEY=your-key
 **Solution**: 
 ```bash
 # Check for type errors
-cd jeffspeaksnode
+cd app
 pnpm type-check
 
 # Fix unused variable warnings by prefixing with underscore: _req, _res, _next
@@ -506,14 +506,14 @@ pnpm type-check
 **Problem**: Port 3000 or 3001 is already occupied.
 
 **Solution**: 
-- Change backend port: Set `PORT=3002` in `jeffspeaksnode/.env`
+- Change backend port: Set `PORT=3002` in `app/.env`
 - Change frontend port: Update `vite.config.ts` or use `--port` flag
 
 #### Webhook timeout errors
 
 **Problem**: Pipeline takes too long to respond.
 
-**Solution**: Increase timeout in `jeffspeaksnode/src/config/index.ts` (default: 5 minutes)
+**Solution**: Increase timeout in `app/src/config/index.ts` (default: 5 minutes)
 
 ### Getting Help
 
