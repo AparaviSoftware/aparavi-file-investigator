@@ -7,18 +7,18 @@ import config from './config';
 import { errorHandler, notFoundHandler, AppError } from './middleware/errorHandler';
 import { extractPipelineOutput } from './utils/extractOutput';
 import {
-  ChatRequestBody,
-  ChatResponse,
-  WebhookResponse,
-  WebhookRequestConfig
+	ChatRequestBody,
+	ChatResponse,
+	WebhookResponse,
+	WebhookRequestConfig
 } from './types';
 
 // Validate configuration on startup
 try {
-  config.validate();
+	config.validate();
 } catch (error) {
-  console.error('❌ Configuration error:', (error as Error).message);
-  process.exit(1);
+	console.error('❌ Configuration error:', (error as Error).message);
+	process.exit(1);
 }
 
 const app: Application = express();
@@ -30,12 +30,31 @@ const app: Application = express();
 // Security headers
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration - FIXED
 app.use(cors({
-  origin: config.frontend.url,
-  credentials: true,
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+	origin: (origin, callback) => {
+		// Allow requests with no origin (like mobile apps, curl, Postman)
+		if (!origin) return callback(null, true);
+
+		// Allow configured frontend URL
+		if (origin === config.frontend.url) {
+			return callback(null, true);
+		}
+
+		// In development, allow localhost on any port
+		if (config.nodeEnv === 'development' &&
+			(origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+			return callback(null, true);
+		}
+
+		callback(new Error('Not allowed by CORS'));
+	},
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+	exposedHeaders: ['X-Response-Time'],
+	preflightContinue: false,
+	optionsSuccessStatus: 204
 }));
 
 // Body parsing
@@ -45,24 +64,24 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: config.rateLimit.windowMs,
-  max: config.rateLimit.maxRequests,
-  message: {
-    error: true,
-    message: 'Too many requests, please try again later.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false
+	windowMs: config.rateLimit.windowMs,
+	max: config.rateLimit.maxRequests,
+	message: {
+		error: true,
+		message: 'Too many requests, please try again later.'
+	},
+	standardHeaders: true,
+	legacyHeaders: false
 });
 
 app.use('/api/', limiter);
 
 // Request logging (development only)
 if (config.nodeEnv === 'development') {
-  app.use((req: Request, _res: Response, next: NextFunction) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
-  });
+	app.use((req: Request, _res: Response, next: NextFunction) => {
+		console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+		next();
+	});
 }
 
 // ============================================================================
@@ -71,13 +90,13 @@ if (config.nodeEnv === 'development') {
 
 // Root endpoint
 app.get('/', (_req: Request, res: Response) => {
-  res.json({
-    name: 'Aparavi Pipeline Chat Backend',
-    version: '1.0.0',
-    endpoints: {
-      chat: 'POST /api/chat'
-    }
-  });
+	res.json({
+		name: 'Aparavi Pipeline Chat Backend',
+		version: '1.0.0',
+		endpoints: {
+			chat: 'POST /api/chat'
+		}
+	});
 });
 
 // ============================================================================
@@ -86,82 +105,82 @@ app.get('/', (_req: Request, res: Response) => {
 
 // Text/JSON chat endpoint
 app.post('/api/chat', async (req: Request<{}, ChatResponse, ChatRequestBody>, res: Response<ChatResponse>, next: NextFunction) => {
-  try {
-    const { message, data } = req.body;
+	try {
+		const { message, data } = req.body;
 
-    // Validation
-    if (!message && !data) {
-      throw new AppError('Either "message" or "data" field is required', 400);
-    }
+		// Validation
+		if (!message && !data) {
+			throw new AppError('Either "message" or "data" field is required', 400);
+		}
 
-    console.log('Processing chat request:', {
-      hasMessage: !!message,
-      hasData: !!data
-    });
+		console.log('Processing chat request:', {
+			hasMessage: !!message,
+			hasData: !!data
+		});
 
-    // Prepare payload
-    const payload = data || { text: message };
+		// Prepare payload
+		const payload = data || { text: message };
 
-    // Configure webhook request
-    const webhookConfig: WebhookRequestConfig = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': config.webhook.apiKey
-      },
-      params: {
-        apikey: config.webhook.apiKey
-      },
-      timeout: config.webhook.timeout,
-      validateStatus: (status: number) => status < 500 // Don't throw on 4xx errors
-    };
+		// Configure webhook request
+		const webhookConfig: WebhookRequestConfig = {
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': config.webhook.apiKey
+			},
+			params: {
+				apikey: config.webhook.apiKey
+			},
+			timeout: config.webhook.timeout,
+			validateStatus: (status: number) => status < 500 // Don't throw on 4xx errors
+		};
 
-    // Make PUT request to webhook
-    const response = await axios.put<WebhookResponse>(
-      config.webhook.baseUrl,
-      payload,
-      webhookConfig
-    );
+		// Make PUT request to webhook
+		const response = await axios.put<WebhookResponse>(
+			config.webhook.baseUrl,
+			payload,
+			webhookConfig
+		);
 
-    // Handle non-200 responses
-    if (response.status !== 200) {
-      throw new AppError('Pipeline returned an error', response.status, response.data);
-    }
+		// Handle non-200 responses
+		if (response.status !== 200) {
+			throw new AppError('Pipeline returned an error', response.status, response.data);
+		}
 
-    // Extract result
-    const result = extractPipelineOutput(response.data);
+		// Extract result
+		const result = extractPipelineOutput(response.data);
 
-    res.json({
-      success: true,
-      result,
-      metadata: {
-        timestamp: new Date().toISOString(),
-        processingTime: response.headers['x-response-time']
-      }
-    });
+		res.json({
+			success: true,
+			result,
+			metadata: {
+				timestamp: new Date().toISOString(),
+				processingTime: response.headers['x-response-time']
+			}
+		});
 
-  } catch (error) {
-    const axiosError = error as AxiosError;
+	} catch (error) {
+		const axiosError = error as AxiosError;
 
-    console.error('Chat endpoint error:', {
-      message: (error as Error).message,
-      response: axiosError.response?.data,
-      status: axiosError.response?.status
-    });
+		console.error('Chat endpoint error:', {
+			message: (error as Error).message,
+			response: axiosError.response?.data,
+			status: axiosError.response?.status
+		});
 
-    if (axiosError.code === 'ECONNABORTED') {
-      return next(new AppError('Pipeline processing timeout - request took too long', 504));
-    }
+		if (axiosError.code === 'ECONNABORTED') {
+			return next(new AppError('Pipeline processing timeout - request took too long', 504));
+		}
 
-    if (axiosError.response) {
-      return next(new AppError(
-        'Pipeline processing failed',
-        axiosError.response.status,
-        axiosError.response.data
-      ));
-    }
+		if (axiosError.response) {
+			return next(new AppError(
+				'Pipeline processing failed',
+				axiosError.response.status,
+				axiosError.response.data
+			));
+		}
 
-    next(error);
-  }
+		next(error);
+	}
 });
 
 // ============================================================================
@@ -179,36 +198,36 @@ app.use(errorHandler);
 // ============================================================================
 
 const server = app.listen(config.port, () => {
-  console.log('');
-  console.log('='.repeat(60));
-  console.log('🚀 Aparavi Pipeline Chat Backend (TypeScript)');
-  console.log('='.repeat(60));
-  console.log(`📍 Server: http://localhost:${config.port}`);
-  console.log(`🌍 Environment: ${config.nodeEnv}`);
-  console.log(`🔗 Webhook: ${config.webhook.baseUrl}`);
-  console.log(`🎨 Frontend: ${config.frontend.url}`);
-  console.log('='.repeat(60));
-  console.log('');
-  console.log('Available endpoints:');
-  console.log(`  POST /api/chat        - Text/JSON chat`);
-  console.log('');
-  console.log('Press Ctrl+C to stop');
-  console.log('');
+	console.log('');
+	console.log('='.repeat(60));
+	console.log('🚀 Aparavi Pipeline Chat Backend (TypeScript)');
+	console.log('='.repeat(60));
+	console.log(`📍 Server: http://localhost:${config.port}`);
+	console.log(`🌍 Environment: ${config.nodeEnv}`);
+	console.log(`🔗 Webhook: ${config.webhook.baseUrl}`);
+	console.log(`🎨 Frontend: ${config.frontend.url}`);
+	console.log('='.repeat(60));
+	console.log('');
+	console.log('Available endpoints:');
+	console.log(`  POST /api/chat        - Text/JSON chat`);
+	console.log('');
+	console.log('Press Ctrl+C to stop');
+	console.log('');
 });
 
 // Graceful shutdown
 const shutdown = (): void => {
-  console.log('\nShutting down gracefully...');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
+	console.log('\nShutting down gracefully...');
+	server.close(() => {
+		console.log('Server closed');
+		process.exit(0);
+	});
 
-  // Force shutdown after 10 seconds
-  setTimeout(() => {
-    console.error('Forced shutdown');
-    process.exit(1);
-  }, 10000);
+	// Force shutdown after 10 seconds
+	setTimeout(() => {
+		console.error('Forced shutdown');
+		process.exit(1);
+	}, 10000);
 };
 
 process.on('SIGTERM', shutdown);
