@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Message } from '../types'
+import { Message } from '../../types'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import LoadingDots from './LoadingDots'
-import jeffProfile from '../assets/jeff_profile.svg'
+import LoadingDots from '../loading-dots/LoadingDots'
+import jeffProfile from '../../assets/jeff_profile.svg'
 import './ChatMessage.css'
 
 interface ChatMessageProps {

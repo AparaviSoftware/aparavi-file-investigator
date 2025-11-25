@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
 import './App.css'
-import About from './components/About'
+import About from './routes/About'
 import { ApiProvider } from './contexts/ApiContext'
 import Home from './routes/Home'
 

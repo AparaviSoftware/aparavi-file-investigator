@@ -2,8 +2,8 @@ import { useRef, useEffect } from "react";
 
 import { useApi, ApiContextType } from "../contexts/ApiContext";
 import useResponseActions from "../hooks/useResponseActions";
-import ChatMessage from "../components/ChatMessage";
-import ChatInput from "../components/ChatInput";
+import ChatMessage from "../components/chat-message/ChatMessage";
+import ChatInput from "../components/chat-input/ChatInput";
 
 const Home = () => {
     const { messages, isLoading, sendMessage }: ApiContextType = useApi()
