@@ -2,7 +2,7 @@ import { ApiResponse } from '../types'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
-export async function sendMessage(message: string): Promise<ApiResponse> {
+export async function postMessage(message: string): Promise<ApiResponse> {
   const response = await fetch(`${API_URL}/api/chat`, {
     method: 'POST',
     headers: {

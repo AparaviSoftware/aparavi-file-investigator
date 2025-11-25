@@ -5,6 +5,7 @@ export interface Message {
   timestamp: Date
   isError?: boolean
   isLoading?: boolean
+  animate?: boolean  // Flag to indicate if message should have typewriter effect
 }
 
 export interface ApiResponse {
