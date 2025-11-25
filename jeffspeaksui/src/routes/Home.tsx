@@ -1,13 +1,13 @@
 import { useRef, useEffect } from "react";
 
 import { useApi, ApiContextType } from "../contexts/ApiContext";
-import useResponseActions from "../hooks/useResponseActions";
-import ChatMessage from "../components/chat-message/ChatMessage";
+import ChatMessage from "../components/chat-message/AiMessage";
 import ChatInput from "../components/chat-input/ChatInput";
+import AiMessage from "../components/chat-message/AiMessage";
+import UserMessage from "../components/chat-message/UserMessage";
 
 const Home = () => {
     const { messages, isLoading, sendMessage }: ApiContextType = useApi()
-    const { handleRegenerate, handleCopy, handleShare } = useResponseActions();
 
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -25,13 +25,11 @@ const Home = () => {
             <main className="chat-container" ref={chatContainerRef}>
                 <div className="messages">
                     {messages.map((message) => (
-                        <ChatMessage
-                            key={message.id}
-                            message={message}
-                            onRegenerate={message.role === 'assistant' ? () => handleRegenerate(message.id) : undefined}
-                            onCopy={message.role === 'assistant' ? () => handleCopy(message.content) : undefined}
-                            onShare={message.role === 'assistant' ? () => handleShare(message.content) : undefined}
-                        />
+                        message.role === 'user' ? (
+                            <UserMessage key={message.id} message={message} />
+                        ) : (
+                            <AiMessage key={message.id} message={message} />
+                        )
                     ))}
                     {isLoading && (
                         <ChatMessage
