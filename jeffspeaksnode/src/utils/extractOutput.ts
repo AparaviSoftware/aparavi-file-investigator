@@ -19,17 +19,37 @@ export function extractPipelineOutput(responseData: WebhookResponse): any {
           return firstObject.text;
         }
 
-        // Otherwise return the entire object
-        return firstObject;
+        // Check for other content fields
+        if (firstObject?.content) {
+          return firstObject.content;
+        }
+        if (firstObject?.result) {
+          return firstObject.result;
+        }
+        if (firstObject?.response) {
+          return firstObject.response;
+        }
+        if (firstObject?.output) {
+          return firstObject.output;
+        }
+
+        // If no text/content field, convert object to string for display
+        // Frontend expects a string, not an object
+        if (typeof firstObject === 'object') {
+          return JSON.stringify(firstObject, null, 2);
+        }
+
+        // Otherwise return as string
+        return String(firstObject);
       }
     }
 
     // Fallback: return entire response if structure doesn't match expected format
     console.warn('Unexpected response structure, returning full data');
-    return responseData;
+    return typeof responseData === 'object' ? JSON.stringify(responseData, null, 2) : String(responseData);
     
   } catch (error) {
     console.error('Error extracting pipeline output:', error);
-    return responseData;
+    return typeof responseData === 'object' ? JSON.stringify(responseData, null, 2) : String(responseData);
   }
 }

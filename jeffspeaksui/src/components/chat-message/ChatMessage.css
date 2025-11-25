@@ -58,13 +58,18 @@
 
   .message-user {
     justify-content: flex-end;
+    align-items: flex-end;
   }
   
   .message-user .message-content {
     background: #f5f5f5;
     padding: 0.75rem 1rem;
     border-radius: 1rem;
-    border-top-left-radius: 0.25rem;
+  }
+
+  .message-user .message-avatar {
+    align-self: flex-end;
+    margin-top: auto;
   }
   
   .message-user .message-content p {
@@ -76,7 +81,6 @@
     background: #ffffff;
     padding: 0.75rem 1rem;
     border-radius: 1rem;
-    border-top-right-radius: 0.25rem;
     color: #191919;
   }
   

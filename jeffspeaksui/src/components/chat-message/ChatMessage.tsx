@@ -13,15 +13,18 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage({ message, avatar, actions }: ChatMessageProps) {
+    const isUser = message.role === 'user';
 
     return (
         <div
-            className={`message ${message.role === 'user' ? 'message-user' : 'message-assistant'} ${message.isError ? 'message-error' : ''}`}
+            className={`message ${isUser ? 'message-user' : 'message-assistant'} ${message.isError ? 'message-error' : ''}`}
         >
-            <div className={`message-avatar ${message.role === 'user' ? 'avatar-user' : 'avatar-assistant'}`}>
-                {avatar.type === 'string' && avatar.value}
-                {avatar.type === 'image' && <img src={avatar.value} alt="Avatar" className="avatar-image" />}
-            </div>
+            {!isUser && (
+                <div className={`message-avatar ${isUser ? 'avatar-user' : 'avatar-assistant'}`}>
+                    {avatar.type === 'string' && avatar.value}
+                    {avatar.type === 'image' && <img src={avatar.value} alt="Avatar" className="avatar-image" />}
+                </div>
+            )}
             <div className="message-content-wrapper">
                 <div className="message-content">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -36,6 +39,12 @@ export default function ChatMessage({ message, avatar, actions }: ChatMessagePro
                 </div>
                 {actions}
             </div>
+            {isUser && (
+                <div className={`message-avatar ${isUser ? 'avatar-user' : 'avatar-assistant'}`}>
+                    {avatar.type === 'string' && avatar.value}
+                    {avatar.type === 'image' && <img src={avatar.value} alt="Avatar" className="avatar-image" />}
+                </div>
+            )}
         </div>
     )
 }

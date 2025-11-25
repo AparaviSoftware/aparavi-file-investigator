@@ -115,8 +115,8 @@ app.post('/api/chat', async (req: Request<{}, ChatResponse, ChatRequestBody>, re
       validateStatus: (status: number) => status < 500 // Don't throw on 4xx errors
     };
 
-    // Make PUT request to webhook
-    const response = await axios.put<WebhookResponse>(
+    // Make POST request to webhook
+    const response = await axios.post<WebhookResponse>(
       config.webhook.baseUrl,
       payload,
       webhookConfig
