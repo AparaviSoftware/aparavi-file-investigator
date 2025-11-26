@@ -16,7 +16,7 @@ importers:
         specifier: ^8.2.2
         version: 8.2.2
 
-  jeffspeaksnode:
+  app:
     dependencies:
       axios:
         specifier: ^1.6.7
