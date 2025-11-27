@@ -102,7 +102,6 @@ const server = app.listen(config.port, () => {
 	const moment = require('moment');
 	const os = require('os');
 	const tsVersion = require('typescript').version;
-  
 	console.log(`
   ****************************************
   *
