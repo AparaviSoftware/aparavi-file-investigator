@@ -4,10 +4,10 @@
 	"description": "Aparavi pipeline chat application",
 	"private": true,
 	"scripts": {
-		"start": "pnpm build && concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./app start\" \"pnpm --filter ./jeffspeaksui preview\"",
-		"dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./app dev\" \"pnpm --filter ./jeffspeaksui dev\"",
-		"build": "pnpm --filter ./app build && pnpm --filter ./jeffspeaksui build",
-		"install:all": "pnpm install --filter ./app --filter ./jeffspeaksui"
+		"start": "pnpm build && concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./app start\" \"pnpm --filter ./client preview\"",
+		"dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./app dev\" \"pnpm --filter ./client dev\"",
+		"build": "pnpm --filter ./app build && pnpm --filter ./client build",
+		"install:all": "pnpm install --filter ./app --filter ./client"
 	},
 	"devDependencies": {
 		"concurrently": "^8.2.2"

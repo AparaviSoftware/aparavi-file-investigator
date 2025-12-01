@@ -20,7 +20,7 @@ A full-stack chat interface for interacting with Aparavi data pipelines. This mo
 
 This application provides a clean, Claude-inspired chat interface for interacting with Aparavi data pipeline webhooks. The system consists of two main components:
 
-- **jeffspeaksui** - React frontend with Vite (runs on port 3000)
+- **client** - React frontend with Vite (runs on port 3000)
 - **app** - TypeScript/Express backend proxy (runs on port 3001)
 
 The backend acts as a secure proxy between the frontend and the Aparavi webhook, handling authentication, rate limiting, error handling, and response processing.
@@ -44,7 +44,7 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 
 ### Component Responsibilities
 
-**Frontend (jeffspeaksui)**
+**Frontend (client)**
 - Provides the user interface (Claude-inspired chat UI)
 - Handles user input and file uploads
 - Displays messages with markdown support
@@ -71,7 +71,7 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 
 ## 🛠️ Tech Stack
 
-### Frontend (jeffspeaksui)
+### Frontend (client)
 - **React 18** - UI framework
 - **TypeScript** - Type safety
 - **Vite** - Build tool and dev server
@@ -95,7 +95,7 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 
 ```
 aparavi-epstein-files/
-├── jeffspeaksui/              # Frontend React application
+├── client/              # Frontend React application
 │   ├── src/
 │   │   ├── components/        # React components
 │   │   │   ├── About.tsx      # About page component
@@ -163,7 +163,7 @@ brew install pnpm
 pnpm install
 ```
 
-This will install dependencies for both `jeffspeaksui` and `app` using pnpm workspaces.
+This will install dependencies for both `client` and `app` using pnpm workspaces.
 
 ### 2. Configure Environment Variables
 
@@ -191,9 +191,9 @@ RATE_LIMIT_WINDOW_MS=900000                  # Rate limit window (15 minutes)
 RATE_LIMIT_MAX_REQUESTS=100                  # Max requests per window
 ```
 
-#### Frontend Configuration (`jeffspeaksui/.env`)
+#### Frontend Configuration (`client/.env`)
 
-Create a `.env` file in the `jeffspeaksui` directory:
+Create a `.env` file in the `client` directory:
 
 ```env
 VITE_API_URL=http://localhost:3001           # Backend API URL
@@ -275,7 +275,7 @@ pnpm start      # Production mode
 
 **Frontend only:**
 ```bash
-cd jeffspeaksui
+cd client
 pnpm dev        # Development server
 pnpm build      # Production build
 pnpm preview    # Preview production build
@@ -298,7 +298,7 @@ cd app
 pnpm type-check
 
 # Check frontend types
-cd jeffspeaksui
+cd client
 pnpm type-check
 ```
 
@@ -310,7 +310,7 @@ cd app
 pnpm lint
 
 # Lint frontend
-cd jeffspeaksui
+cd client
 pnpm lint
 ```
 
@@ -325,7 +325,7 @@ pnpm build
 
 This will:
 - Compile TypeScript in `app` → `dist/`
-- Build React app in `jeffspeaksui` → `dist/`
+- Build React app in `client` → `dist/`
 
 ### Running Production Build
 
@@ -356,14 +356,14 @@ The frontend can be deployed to any static hosting service:
 
 **Vercel/Netlify:**
 ```bash
-cd jeffspeaksui
+cd client
 pnpm build
 # Deploy the dist/ folder
 ```
 
 **Nginx:**
 ```bash
-cd jeffspeaksui
+cd client
 pnpm build
 # Copy dist/ to nginx html directory
 ```
@@ -466,7 +466,7 @@ Root endpoint with API information.
 ```yaml
 packages:
   - 'app'
-  - 'jeffspeaksui'
+  - 'client'
 ```
 
 #### Backend won't start - "Missing required environment variables"
