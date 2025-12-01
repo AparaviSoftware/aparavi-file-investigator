@@ -94,7 +94,7 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 ## 📁 Project Structure
 
 ```
-aparavi-epstein-files/
+aparavi-file-investigator/
 ├── client/              # Frontend React application
 │   ├── src/
 │   │   ├── components/        # React components
