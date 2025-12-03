@@ -4,17 +4,22 @@ import aparaviLogo from '../assets/aparavi-logo.png';
 export default function Header() {
 	return (
 		<header className="bg-gray-50 text-gray-800 px-6 py-4 flex items-center justify-between">
-			<div className="text-sm font-medium tracking-wide">
+			<a href="/" className="text-sm font-medium tracking-wide hover:text-gray-600 transition-colors">
 				FILE INVESTIGATOR
-			</div>
-			<div className="flex items-center gap-3">
+			</a>
+			<a
+				href="https://aparavi.com"
+				target="_blank"
+				rel="noopener noreferrer"
+				className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+			>
 				<span className="text-xs text-gray-400">POWERED BY</span>
 				<img
 					src={aparaviLogo}
 					alt="Aparavi"
 					className="h-6 w-auto"
 				/>
-			</div>
+			</a>
 			<a
 				href="https://dtc.aparavi.com/projects/new?templateId=74ef36f1-19c3-4a22-9fa0-b79d9aa42834"
 				target="_blank"

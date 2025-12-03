@@ -75,7 +75,7 @@ export default function FilesChatbot() {
 				{/* Content wrapper */}
 				<div
 					className={`flex-1 flex flex-col transition-all duration-700 ${
-						isChatStarted ? 'justify-start pt-0' : 'items-center justify-center pb-20'
+						isChatStarted ? 'justify-start pt-6' : 'items-center justify-center pb-20'
 					}`}
 				>
 					<div className={`max-w-4xl w-full mx-auto flex flex-col px-6 ${isChatStarted ? 'h-full' : ''}`}>
@@ -103,9 +103,9 @@ export default function FilesChatbot() {
 							/>
 						</div>
 
-						{/* Chat Messages Area - fades in slower when chat starts */}
+						{/* Chat Messages Area - appears above input and gets pushed up */}
 						{isChatStarted && (
-							<div className="flex-1 overflow-y-auto py-6 space-y-4 animate-fade-in">
+							<div className="flex-1 overflow-y-auto mb-6 space-y-4 animate-fade-in">
 								{messages.map((message, index) => (
 									<ChatMessage
 										key={index}
@@ -118,7 +118,7 @@ export default function FilesChatbot() {
 						)}
 
 						{/* Input Box */}
-						<div className={`${isChatStarted ? 'pb-6' : ''}`}>
+						<div>
 							<InputBox
 								query={query}
 								queriesLeft={queriesLeft}
