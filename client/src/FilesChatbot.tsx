@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Plus } from 'lucide-react';
 
 import aparaviLogo from './assets/aparavi-logo.png';
 import documentFilesBg from './assets/document-files-bg.png';
@@ -45,7 +45,7 @@ export default function FilesChatbot() {
 					className="bg-orange-400 hover:bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
 				>
 					Create your own chatbot
-					<span className="text-lg">+</span>
+					<Plus className="w-4 h-4" />
 				</a>
 			</header>
 
@@ -62,7 +62,7 @@ export default function FilesChatbot() {
 			</div>
 
 			{/* Main Content */}
-			<main className="flex-1 flex flex-col items-center justify-center px-6 pt-2 pb-20">
+			<main className="flex-1 flex flex-col items-center justify-center px-6 pb-20">
 				<div className="max-w-4xl w-full mx-auto">
 					{/* Title Section */}
 					<div className="text-center mb-12">
