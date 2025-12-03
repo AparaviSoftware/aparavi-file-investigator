@@ -113,7 +113,7 @@ export default function FilesChatbot() {
 					}`}
 				>
 					{!isChatStarted && (
-						<div className="max-w-4xl w-full mx-auto flex flex-col px-6">
+						<div className="max-w-4xl w-full mx-auto flex flex-col px-4 sm:px-6">
 							{/* Title Section - fades out when chat starts */}
 							<div
 								className={`transition-all duration-1000 ${
@@ -157,8 +157,8 @@ export default function FilesChatbot() {
 					{isChatStarted && (
 						<div className="flex-1 flex flex-col min-h-0 overflow-hidden">
 							{/* Chat Messages Area - scrollable container spans full width */}
-							<div className="chat-scrollbar flex-1 overflow-y-scroll animate-fade-in min-h-0 py-6" style={{ scrollbarGutter: 'stable' }}>
-								<div className="max-w-4xl w-full mx-auto px-6 space-y-4">
+							<div className="chat-scrollbar flex-1 overflow-y-scroll animate-fade-in min-h-0 py-4 sm:py-6" style={{ scrollbarGutter: 'stable' }}>
+								<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 space-y-3 sm:space-y-4">
 									{messages.map((message, index) => (
 										<ChatMessage
 											key={index}
@@ -173,7 +173,7 @@ export default function FilesChatbot() {
 
 							{/* Input Box - stays at bottom */}
 							<div className="flex-shrink-0 border-t border-gray-200 bg-gray-50">
-								<div className="max-w-4xl w-full mx-auto px-6 py-4">
+								<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
 									<InputBox
 										query={query}
 										queriesLeft={queriesLeft}
@@ -192,7 +192,7 @@ export default function FilesChatbot() {
 			</main>
 
 			{/* Footer */}
-			<footer className="flex-shrink-0 text-center py-6 text-sm text-gray-500">
+			<footer className="flex-shrink-0 text-center py-4 sm:py-6 text-xs sm:text-sm text-gray-500 px-4">
 				AI can make mistake. Just like every weirdo who visited the island.
 			</footer>
 			</div>

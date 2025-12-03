@@ -30,7 +30,7 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 
 	return (
 		<div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${disabled ? 'opacity-50' : ''}`}>
-			<div className="flex items-center p-4">
+			<div className="flex items-center p-3 sm:p-4">
 				<input
 					ref={inputRef}
 					type="text"
@@ -38,27 +38,27 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 					onChange={(e) => onQueryChange(e.target.value)}
 					onKeyPress={handleKeyPress}
 					placeholder={disabled ? "Query limit reached" : "Ask anything..."}
-					className="flex-1 outline-none text-gray-800 placeholder-gray-400"
+					className="flex-1 outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400"
 					disabled={disabled}
 				/>
-				<div className="flex items-center gap-3">
+				<div className="flex items-center gap-2 sm:gap-3">
 					{query && (
 						<button
 							onClick={onClear}
-							className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+							className="text-gray-400 hover:text-gray-600 p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition-colors"
 						>
-							<X className="w-5 h-5" />
+							<X className="w-4 h-4 sm:w-5 sm:h-5" />
 						</button>
 					)}
-					<span className="text-sm text-gray-500">
-						{queriesLeft}/{maxQueries} queries
+					<span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+						{queriesLeft}/{maxQueries}
 					</span>
 					<button
 						onClick={() => onSubmit(query)}
 						disabled={!query.trim() || queriesLeft === 0}
-						className="bg-orange-100 text-orange-500 p-2 rounded-lg hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						className="bg-orange-100 text-orange-500 p-1.5 sm:p-2 rounded-lg hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
 					>
-						<Send className="w-5 h-5" />
+						<Send className="w-4 h-4 sm:w-5 sm:h-5" />
 					</button>
 				</div>
 			</div>
