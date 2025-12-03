@@ -9,9 +9,10 @@ interface InputBoxProps {
 	onSubmit: (query: string) => void;
 	onClear: () => void;
 	isChatStarted?: boolean;
+	disabled?: boolean;
 }
 
-export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted }: InputBoxProps) {
+export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted, disabled }: InputBoxProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -28,7 +29,7 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 	};
 
 	return (
-		<div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+		<div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${disabled ? 'opacity-50' : ''}`}>
 			<div className="flex items-center p-4">
 				<input
 					ref={inputRef}
@@ -36,8 +37,9 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 					value={query}
 					onChange={(e) => onQueryChange(e.target.value)}
 					onKeyPress={handleKeyPress}
-					placeholder="Ask anything..."
+					placeholder={disabled ? "Query limit reached" : "Ask anything..."}
 					className="flex-1 outline-none text-gray-800 placeholder-gray-400"
+					disabled={disabled}
 				/>
 				<div className="flex items-center gap-3">
 					{query && (
