@@ -18,6 +18,7 @@
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
+		"lucide-react": "^0.555.0",
 		"moment": "^2.30.1"
 	}
 }
