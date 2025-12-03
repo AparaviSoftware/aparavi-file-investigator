@@ -1,4 +1,4 @@
-import FilesChatbot from './FilesChatbot';
+import FilesChatbot from './pages/FilesChatbot';
 
 function App() {
 	return <FilesChatbot />;

@@ -1,0 +1,53 @@
+import { Send, X } from 'lucide-react';
+
+interface InputBoxProps {
+	query: string;
+	queriesLeft: number;
+	maxQueries: number;
+	onQueryChange: (query: string) => void;
+	onSubmit: (query: string) => void;
+	onClear: () => void;
+}
+
+export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear }: InputBoxProps) {
+	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			onSubmit(query);
+		}
+	};
+
+	return (
+		<div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+			<div className="flex items-center p-4">
+				<input
+					type="text"
+					value={query}
+					onChange={(e) => onQueryChange(e.target.value)}
+					onKeyPress={handleKeyPress}
+					placeholder="Ask anything..."
+					className="flex-1 outline-none text-gray-800 placeholder-gray-400"
+				/>
+				<div className="flex items-center gap-3">
+					{query && (
+						<button
+							onClick={onClear}
+							className="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+						>
+							<X className="w-5 h-5" />
+						</button>
+					)}
+					<span className="text-sm text-gray-500">
+						{queriesLeft}/{maxQueries} queries
+					</span>
+					<button
+						onClick={() => onSubmit(query)}
+						disabled={!query.trim() || queriesLeft === 0}
+						className="bg-orange-100 text-orange-500 p-2 rounded-lg hover:bg-orange-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+					>
+						<Send className="w-5 h-5" />
+					</button>
+				</div>
+			</div>
+		</div>
+	);
+}
