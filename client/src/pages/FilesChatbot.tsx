@@ -22,7 +22,7 @@ export default function FilesChatbot() {
 	const suggestedQuestions = [
 		"Was the CIA really responsible for Epstein's assassination?",
 		"What is the relationship between Donald Trump and Epstein?",
-		"Were the gaurds really asleep during Epstein's suicide?"
+		"Were the guards really asleep during Epstein's suicide?"
 	];
 
 	const handleSubmit = (question: string) => {
