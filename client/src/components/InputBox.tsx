@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Send, X } from 'lucide-react';
 
 interface InputBoxProps {
@@ -7,9 +8,19 @@ interface InputBoxProps {
 	onQueryChange: (query: string) => void;
 	onSubmit: (query: string) => void;
 	onClear: () => void;
+	isChatStarted?: boolean;
 }
 
-export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear }: InputBoxProps) {
+export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted }: InputBoxProps) {
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		// Focus the input when chat starts
+		if (isChatStarted) {
+			inputRef.current?.focus();
+		}
+	}, [isChatStarted]);
+
 	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
 			onSubmit(query);
@@ -20,6 +31,7 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 		<div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 			<div className="flex items-center p-4">
 				<input
+					ref={inputRef}
 					type="text"
 					value={query}
 					onChange={(e) => onQueryChange(e.target.value)}

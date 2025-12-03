@@ -22,7 +22,7 @@ export default function FilesChatbot() {
 	const suggestedQuestions = [
 		"Was the CIA really responsible for Epstein's assassination?",
 		"What is the relationship between Donald Trump and Epstein?",
-		"Where the policeman really asleep during Epstein's suicide?"
+		"Were the gaurds really asleep during Epstein's suicide?"
 	];
 
 	const handleSubmit = (question: string) => {
@@ -65,25 +65,22 @@ export default function FilesChatbot() {
 			<main className="flex-1 flex flex-col overflow-hidden relative">
 				{/* Hero Banner - gets pushed up and out when chat starts */}
 				<div
-					className={`transition-all duration-700 w-full ${
-						isChatStarted ? '-translate-y-full opacity-0 absolute' : 'translate-y-0 opacity-100'
-					}`}
+					className={`transition-all duration-700 w-full ${isChatStarted ? '-translate-y-full opacity-0 absolute' : 'translate-y-0 opacity-100'
+						}`}
 				>
 					<HeroBanner />
 				</div>
 
 				{/* Content wrapper */}
 				<div
-					className={`flex-1 flex flex-col transition-all duration-700 ${
-						isChatStarted ? 'justify-start pt-6' : 'items-center justify-center pb-20'
-					}`}
+					className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start pt-6' : 'items-center justify-center pb-20'
+						}`}
 				>
 					<div className={`max-w-4xl w-full mx-auto flex flex-col px-6 ${isChatStarted ? 'h-full' : ''}`}>
 						{/* Title Section - fades out slower when chat starts */}
 						<div
-							className={`transition-all duration-1000 ${
-								isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
-							}`}
+							className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
+								}`}
 						>
 							<TitleSection
 								title="Chat with the Epstein Files"
@@ -93,9 +90,8 @@ export default function FilesChatbot() {
 
 						{/* Suggested Questions - fades out slower when chat starts */}
 						<div
-							className={`transition-all duration-1000 ${
-								isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
-							}`}
+							className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
+								}`}
 						>
 							<SuggestedQuestions
 								questions={suggestedQuestions}
@@ -126,6 +122,7 @@ export default function FilesChatbot() {
 								onQueryChange={setQuery}
 								onSubmit={handleSubmit}
 								onClear={handleClear}
+								isChatStarted={isChatStarted}
 							/>
 						</div>
 					</div>
