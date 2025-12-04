@@ -1,4 +1,4 @@
-import documentFilesBg from '../assets/document-files-bg.png';
+import documentFilesBg from '../../assets/document-files-bg.png';
 
 export default function HeroBanner() {
 	return (

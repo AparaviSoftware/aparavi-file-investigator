@@ -7,6 +7,7 @@ import SuggestedQuestions from '../components/SuggestedQuestions';
 import InputBox from '../components/InputBox';
 import ChatMessage from '../components/ChatMessage';
 import LoadingDots from '../components/LoadingDots';
+import { t } from '../translations/en';
 
 interface Message {
 	text: string;
@@ -29,14 +30,8 @@ export default function FilesChatbot() {
 		scrollToBottom();
 	}, [messages, isLoading]);
 
-	const suggestedQuestions = [
-		'Was the CIA really responsible for Epstein\'s assassination?',
-		'What is the relationship between Donald Trump and Epstein?',
-		'Were the guards really asleep during Epstein\'s suicide?'
-	];
-
 	const showOutOfQueriesToast = () => {
-		toast.error('You\'re out of queries. Create your own chatbot to continue the conversation.');
+		toast.error(t.errors.outOfQueries);
 	};
 
 	const handleSubmit = (question: string) => {
@@ -65,7 +60,7 @@ export default function FilesChatbot() {
 			// Simulate AI response after a short delay
 			setTimeout(() => {
 				const aiMessage: Message = {
-					text: 'This is a placeholder response. The LLM will be connected later to provide actual answers based on the Epstein Files.',
+					text: t.messages.placeholderResponse,
 					isUser: false
 				};
 				setMessages(prev => [...prev, aiMessage]);
@@ -95,7 +90,7 @@ export default function FilesChatbot() {
 			// Simulate regenerating the response
 			setTimeout(() => {
 				const aiMessage: Message = {
-					text: 'This is a regenerated response. The LLM will be connected later to provide actual answers based on the Epstein Files.',
+					text: t.messages.regeneratedResponse,
 					isUser: false
 				};
 				setMessages(prev => [...prev, aiMessage]);
@@ -123,7 +118,7 @@ export default function FilesChatbot() {
 		// Simulate generating a new response for the edited message
 		setTimeout(() => {
 			const aiMessage: Message = {
-				text: 'This is a response to your edited message. The LLM will be connected later to provide actual answers based on the Epstein Files.',
+				text: t.messages.editedResponse,
 				isUser: false
 			};
 			setMessages(prev => [...prev, aiMessage]);
@@ -157,12 +152,34 @@ export default function FilesChatbot() {
 					scrollbar-width: thin;
 					scrollbar-color: #888 #f1f1f1;
 				}
+				.input-scrollbar::-webkit-scrollbar {
+					width: 12px;
+				}
+				.input-scrollbar::-webkit-scrollbar-track {
+					background: #f1f1f1;
+				}
+				.input-scrollbar::-webkit-scrollbar-thumb {
+					background: #888;
+					border-radius: 6px;
+				}
+				.input-scrollbar::-webkit-scrollbar-thumb:hover {
+					background: #555;
+				}
+				.input-scrollbar::-webkit-scrollbar-button {
+					display: none;
+					height: 0;
+					width: 0;
+				}
+				.input-scrollbar {
+					scrollbar-width: thin;
+					scrollbar-color: #888 #f1f1f1;
+				}
 			`}</style>
 			<div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
 				<Header />
 
 				{/* Main Content */}
-				<main className="flex-1 flex flex-col overflow-hidden relative min-h-0">
+				<main className={`flex-1 flex flex-col relative min-h-0 ${isChatStarted ? 'overflow-hidden' : 'overflow-y-auto'}`}>
 					{/* Hero Banner - gets pushed up and out when chat starts */}
 					<div
 						className={`transition-all duration-700 w-full ${isChatStarted ? '-translate-y-full opacity-0 absolute' : 'translate-y-0 opacity-100'}`}
@@ -172,7 +189,7 @@ export default function FilesChatbot() {
 
 					{/* Content wrapper */}
 					<div
-						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-center pb-20'}`}
+						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-start pt-32'}`}
 					>
 						{!isChatStarted && (
 							<div className="max-w-4xl w-full mx-auto flex flex-col px-4 sm:px-6">
@@ -181,8 +198,8 @@ export default function FilesChatbot() {
 									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<TitleSection
-										title="Chat with the Epstein Files"
-										subtitle="Ask grounded questions against 100 thousand pages of the Epstein Files."
+										title={t.hero.title}
+										subtitle={t.hero.subtitle}
 									/>
 								</div>
 
@@ -191,7 +208,7 @@ export default function FilesChatbot() {
 									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<SuggestedQuestions
-										questions={suggestedQuestions}
+										questions={t.suggestedQuestions}
 										onQuestionClick={setQuery}
 									/>
 								</div>
@@ -251,12 +268,12 @@ export default function FilesChatbot() {
 							</div>
 						)}
 					</div>
-				</main>
 
-				{/* Footer */}
-				<footer className="flex-shrink-0 text-center py-4 sm:py-6 text-xs sm:text-sm text-gray-500 px-4">
-					AI can make mistake. Just like every weirdo who visited the island.
-				</footer>
+					{/* Footer */}
+					<footer className="text-center py-4 sm:py-6 text-xs sm:text-sm text-gray-500 px-4">
+						{t.footer.disclaimer}
+					</footer>
+				</main>
 			</div>
 		</>
 	);

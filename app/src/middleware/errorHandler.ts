@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ErrorResponse } from '../types';
+import { t } from '../translations/translations';
 
 // Custom error class
 export class AppError extends Error {
@@ -37,7 +38,7 @@ export function errorHandler(
   // Don't leak error details in production
   const message = process.env.NODE_ENV === 'development'
     ? err.message
-    : 'An error occurred processing your request';
+    : t.errors.generic;
 
   const response: ErrorResponse = {
     error: true,
@@ -53,7 +54,7 @@ export function errorHandler(
 export function notFoundHandler(req: Request, res: Response): void {
   res.status(404).json({
     error: true,
-    message: 'Endpoint not found',
+    message: t.errors.endpointNotFound,
     path: req.url
   });
 }

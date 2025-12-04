@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Send, X } from 'lucide-react';
+import { t } from '../../translations/en';
 
 interface InputBoxProps {
 	query: string;
@@ -14,40 +15,49 @@ interface InputBoxProps {
 }
 
 export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted, disabled, isLoading }: InputBoxProps) {
-	const inputRef = useRef<HTMLInputElement>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
-		// Focus the input when chat starts
+		// Focus the textarea when chat starts
 		if (isChatStarted) {
-			inputRef.current?.focus();
+			textareaRef.current?.focus();
 		}
 	}, [isChatStarted]);
 
 	useEffect(() => {
-		// Focus the input when loading completes
+		// Focus the textarea when loading completes
 		if (!isLoading && isChatStarted) {
-			inputRef.current?.focus();
+			textareaRef.current?.focus();
 		}
 	}, [isLoading, isChatStarted]);
 
-	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
+	useEffect(() => {
+		// Auto-resize textarea based on content
+		if (textareaRef.current) {
+			textareaRef.current.style.height = 'auto';
+			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+		}
+	}, [query]);
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
 			onSubmit(query);
 		}
 	};
 
 	return (
 		<div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${disabled ? 'opacity-50' : ''}`}>
-			<div className="flex items-center p-3 sm:p-4">
-				<input
-					ref={inputRef}
-					type="text"
+			<div className="flex items-start p-3 sm:p-4">
+				<textarea
+					ref={textareaRef}
 					value={query}
 					onChange={(e) => onQueryChange(e.target.value)}
-					onKeyPress={handleKeyPress}
-					placeholder={disabled ? "Query limit reached" : "Ask anything..."}
-					className="flex-1 outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400"
+					onKeyDown={handleKeyDown}
+					placeholder={disabled ? t.input.placeholderDisabled : t.input.placeholder}
+					className="input-scrollbar flex-1 outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400 resize-none overflow-y-auto min-h-[24px] max-h-[200px]"
 					disabled={disabled}
+					rows={1}
 				/>
 				<div className="flex items-center gap-2 sm:gap-3">
 					{query && (
