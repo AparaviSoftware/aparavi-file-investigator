@@ -30,13 +30,13 @@ export default function FilesChatbot() {
 	}, [messages, isLoading]);
 
 	const suggestedQuestions = [
-		"Was the CIA really responsible for Epstein's assassination?",
-		"What is the relationship between Donald Trump and Epstein?",
-		"Were the guards really asleep during Epstein's suicide?"
+		'Was the CIA really responsible for Epstein\'s assassination?',
+		'What is the relationship between Donald Trump and Epstein?',
+		'Were the guards really asleep during Epstein\'s suicide?'
 	];
 
 	const showOutOfQueriesToast = () => {
-		toast.error("You're out of queries. Create your own chatbot to continue the conversation.");
+		toast.error('You\'re out of queries. Create your own chatbot to continue the conversation.');
 	};
 
 	const handleSubmit = (question: string) => {
@@ -65,7 +65,7 @@ export default function FilesChatbot() {
 			// Simulate AI response after a short delay
 			setTimeout(() => {
 				const aiMessage: Message = {
-					text: "This is a placeholder response. The LLM will be connected later to provide actual answers based on the Epstein Files.",
+					text: 'This is a placeholder response. The LLM will be connected later to provide actual answers based on the Epstein Files.',
 					isUser: false
 				};
 				setMessages(prev => [...prev, aiMessage]);
@@ -95,7 +95,7 @@ export default function FilesChatbot() {
 			// Simulate regenerating the response
 			setTimeout(() => {
 				const aiMessage: Message = {
-					text: "This is a regenerated response. The LLM will be connected later to provide actual answers based on the Epstein Files.",
+					text: 'This is a regenerated response. The LLM will be connected later to provide actual answers based on the Epstein Files.',
 					isUser: false
 				};
 				setMessages(prev => [...prev, aiMessage]);
@@ -123,7 +123,7 @@ export default function FilesChatbot() {
 		// Simulate generating a new response for the edited message
 		setTimeout(() => {
 			const aiMessage: Message = {
-				text: "This is a response to your edited message. The LLM will be connected later to provide actual answers based on the Epstein Files.",
+				text: 'This is a response to your edited message. The LLM will be connected later to provide actual answers based on the Epstein Files.',
 				isUser: false
 			};
 			setMessages(prev => [...prev, aiMessage]);
@@ -165,23 +165,20 @@ export default function FilesChatbot() {
 				<main className="flex-1 flex flex-col overflow-hidden relative min-h-0">
 					{/* Hero Banner - gets pushed up and out when chat starts */}
 					<div
-						className={`transition-all duration-700 w-full ${isChatStarted ? '-translate-y-full opacity-0 absolute' : 'translate-y-0 opacity-100'
-							}`}
+						className={`transition-all duration-700 w-full ${isChatStarted ? '-translate-y-full opacity-0 absolute' : 'translate-y-0 opacity-100'}`}
 					>
 						<HeroBanner />
 					</div>
 
 					{/* Content wrapper */}
 					<div
-						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-center pb-20'
-							}`}
+						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-center pb-20'}`}
 					>
 						{!isChatStarted && (
 							<div className="max-w-4xl w-full mx-auto flex flex-col px-4 sm:px-6">
 								{/* Title Section - fades out when chat starts */}
 								<div
-									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
-										}`}
+									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<TitleSection
 										title="Chat with the Epstein Files"
@@ -191,8 +188,7 @@ export default function FilesChatbot() {
 
 								{/* Suggested Questions - fades out when chat starts */}
 								<div
-									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
-										}`}
+									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<SuggestedQuestions
 										questions={suggestedQuestions}
