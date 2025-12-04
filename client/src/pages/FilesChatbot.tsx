@@ -189,7 +189,7 @@ export default function FilesChatbot() {
 
 					{/* Content wrapper */}
 					<div
-						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-start pt-32'}`}
+						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-start pt-6'}`}
 					>
 						{!isChatStarted && (
 							<div className="max-w-4xl w-full mx-auto flex flex-col px-4 sm:px-6">

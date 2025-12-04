@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Send, X } from 'lucide-react';
 import { t } from '../../translations/en';
 
@@ -16,6 +16,7 @@ interface InputBoxProps {
 
 export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted, disabled, isLoading }: InputBoxProps) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const [hasOverflow, setHasOverflow] = useState(false);
 
 	useEffect(() => {
 		// Focus the textarea when chat starts
@@ -32,10 +33,14 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 	}, [isLoading, isChatStarted]);
 
 	useEffect(() => {
-		// Auto-resize textarea based on content
+		// Auto-resize textarea based on content and check for overflow
 		if (textareaRef.current) {
 			textareaRef.current.style.height = 'auto';
 			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+
+			// Check if textarea has overflow (scrollbar appears)
+			const hasScroll = textareaRef.current.scrollHeight > textareaRef.current.clientHeight;
+			setHasOverflow(hasScroll);
 		}
 	}, [query]);
 
@@ -48,18 +53,18 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 
 	return (
 		<div className={`bg-white border border-gray-200 rounded-lg shadow-sm ${disabled ? 'opacity-50' : ''}`}>
-			<div className="flex items-start p-3 sm:p-4">
+			<div className={`flex p-3 sm:p-4 gap-2 sm:gap-3 ${hasOverflow ? 'flex-col' : 'items-start'}`}>
 				<textarea
 					ref={textareaRef}
 					value={query}
 					onChange={(e) => onQueryChange(e.target.value)}
 					onKeyDown={handleKeyDown}
 					placeholder={disabled ? t.input.placeholderDisabled : t.input.placeholder}
-					className="input-scrollbar flex-1 outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400 resize-none overflow-y-auto min-h-[24px] max-h-[200px]"
+					className={`input-scrollbar outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400 resize-none overflow-y-auto min-h-[24px] max-h-[200px] ${hasOverflow ? 'w-full' : 'flex-1'}`}
 					disabled={disabled}
 					rows={1}
 				/>
-				<div className="flex items-center gap-2 sm:gap-3">
+				<div className={`flex items-center gap-2 sm:gap-3 ${hasOverflow ? 'justify-end' : ''}`}>
 					{query && (
 						<button
 							onClick={onClear}
