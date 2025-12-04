@@ -10,9 +10,10 @@ interface InputBoxProps {
 	onClear: () => void;
 	isChatStarted?: boolean;
 	disabled?: boolean;
+	isLoading?: boolean;
 }
 
-export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted, disabled }: InputBoxProps) {
+export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange, onSubmit, onClear, isChatStarted, disabled, isLoading }: InputBoxProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -21,6 +22,13 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 			inputRef.current?.focus();
 		}
 	}, [isChatStarted]);
+
+	useEffect(() => {
+		// Focus the input when loading completes
+		if (!isLoading && isChatStarted) {
+			inputRef.current?.focus();
+		}
+	}, [isLoading, isChatStarted]);
 
 	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
