@@ -8,6 +8,7 @@ import InputBox from '../components/InputBox';
 import ChatMessage from '../components/ChatMessage';
 import LoadingDots from '../components/LoadingDots';
 import { t } from '../translations/en';
+import './FilesChatbot.css';
 
 interface Message {
 	text: string;
@@ -20,7 +21,9 @@ export default function FilesChatbot() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [isChatStarted, setIsChatStarted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [chatInputTransform, setChatInputTransform] = useState(0);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const mainInputRef = useRef<HTMLDivElement>(null);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -29,6 +32,15 @@ export default function FilesChatbot() {
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages, isLoading]);
+
+	useEffect(() => {
+		if (isChatStarted && chatInputTransform !== 0) {
+			// Start animation immediately
+			requestAnimationFrame(() => {
+				setChatInputTransform(0);
+			});
+		}
+	}, [isChatStarted, chatInputTransform]);
 
 	const showOutOfQueriesToast = () => {
 		toast.error(t.errors.outOfQueries);
@@ -43,6 +55,15 @@ export default function FilesChatbot() {
 		}
 
 		if (queriesLeft > 0) {
+			// Measure main input position before chat starts
+			if (mainInputRef.current) {
+				const rect = mainInputRef.current.getBoundingClientRect();
+				// Calculate distance from main input bottom to viewport bottom
+				// This positions the chat input to start at the main input's location
+				const distanceFromBottom = window.innerHeight - rect.bottom - 80;
+				setChatInputTransform(distanceFromBottom);
+			}
+
 			// Start chat mode
 			setIsChatStarted(true);
 
@@ -129,52 +150,6 @@ export default function FilesChatbot() {
 	return (
 		<>
 			<Toaster position="top-center" />
-			<style>{`
-				.chat-scrollbar::-webkit-scrollbar {
-					width: 12px;
-				}
-				.chat-scrollbar::-webkit-scrollbar-track {
-					background: #f1f1f1;
-				}
-				.chat-scrollbar::-webkit-scrollbar-thumb {
-					background: #888;
-					border-radius: 6px;
-				}
-				.chat-scrollbar::-webkit-scrollbar-thumb:hover {
-					background: #555;
-				}
-				.chat-scrollbar::-webkit-scrollbar-button {
-					display: none;
-					height: 0;
-					width: 0;
-				}
-				.chat-scrollbar {
-					scrollbar-width: thin;
-					scrollbar-color: #888 #f1f1f1;
-				}
-				.input-scrollbar::-webkit-scrollbar {
-					width: 12px;
-				}
-				.input-scrollbar::-webkit-scrollbar-track {
-					background: #f1f1f1;
-				}
-				.input-scrollbar::-webkit-scrollbar-thumb {
-					background: #888;
-					border-radius: 6px;
-				}
-				.input-scrollbar::-webkit-scrollbar-thumb:hover {
-					background: #555;
-				}
-				.input-scrollbar::-webkit-scrollbar-button {
-					display: none;
-					height: 0;
-					width: 0;
-				}
-				.input-scrollbar {
-					scrollbar-width: thin;
-					scrollbar-color: #888 #f1f1f1;
-				}
-			`}</style>
 			<div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
 				<Header />
 
@@ -195,7 +170,7 @@ export default function FilesChatbot() {
 							<div className="max-w-4xl w-full mx-auto flex flex-col px-4 sm:px-6">
 								{/* Title Section - fades out when chat starts */}
 								<div
-									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
+									className={`transition-all duration-700 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<TitleSection
 										title={t.hero.title}
@@ -205,7 +180,7 @@ export default function FilesChatbot() {
 
 								{/* Suggested Questions - fades out when chat starts */}
 								<div
-									className={`transition-all duration-1000 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
+									className={`transition-all duration-700 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<SuggestedQuestions
 										questions={t.suggestedQuestions}
@@ -214,7 +189,7 @@ export default function FilesChatbot() {
 								</div>
 
 								{/* Input Box */}
-								<div>
+								<div ref={mainInputRef} className="transition-all duration-700">
 									<InputBox
 										query={query}
 										queriesLeft={queriesLeft}
@@ -233,7 +208,7 @@ export default function FilesChatbot() {
 						{isChatStarted && (
 							<div className="flex-1 flex flex-col min-h-0 overflow-hidden">
 								{/* Chat Messages Area - scrollable container spans full width */}
-								<div className="chat-scrollbar flex-1 overflow-y-scroll animate-fade-in min-h-0 py-4 sm:py-6" style={{ scrollbarGutter: 'stable' }}>
+								<div className="chat-scrollbar flex-1 overflow-y-scroll animate-fade-in min-h-0 py-4 sm:py-6">
 									<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 space-y-3 sm:space-y-4">
 										{messages.map((message, index) => (
 											<ChatMessage
@@ -250,7 +225,13 @@ export default function FilesChatbot() {
 								</div>
 
 								{/* Input Box - stays at bottom */}
-								<div className="flex-shrink-0 border-t border-gray-200 bg-gray-50">
+								<div
+									className="flex-shrink-0 border-t border-gray-200 bg-gray-50"
+									style={{
+										transform: `translateY(-${chatInputTransform}px)`,
+										transition: 'transform 700ms ease-out'
+									}}
+								>
 									<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
 										<InputBox
 											query={query}

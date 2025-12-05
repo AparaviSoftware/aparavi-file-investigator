@@ -15,6 +15,18 @@ export default function ChatMessage({ message, isUser, onRegenerate, onEdit }: C
 	const [bubbleWidth, setBubbleWidth] = useState<number | null>(null);
 	const bubbleRef = useRef<HTMLDivElement>(null);
 
+	// Add zero-width spaces to long strings without spaces to allow wrapping
+	const formatMessage = (text: string): string => {
+		const maxSegmentLength = 50;
+		return text.split(' ').map(word => {
+			if (word.length > maxSegmentLength) {
+				// Insert zero-width space every maxSegmentLength characters
+				return word.match(new RegExp(`.{1,${maxSegmentLength}}`, 'g'))?.join('\u200B') || word;
+			}
+			return word;
+		}).join(' ');
+	};
+
 	const handleCopy = async () => {
 		await navigator.clipboard.writeText(message);
 		setCopied(true);
@@ -76,7 +88,7 @@ export default function ChatMessage({ message, isUser, onRegenerate, onEdit }: C
 						</>
 					) : (
 						<>
-							<p className="text-sm leading-relaxed break-words">{message}</p>
+							<p className="text-sm leading-relaxed break-words">{formatMessage(message)}</p>
 							{!isUser && (
 								<div className="flex justify-start gap-2 mt-2">
 									<button

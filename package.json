@@ -25,6 +25,7 @@
 	},
 	"dependencies": {
 		"cors": "^2.8.5",
+		"eslint-plugin-import": "^2.32.0",
 		"lucide-react": "^0.555.0",
 		"moment": "^2.30.1"
 	}

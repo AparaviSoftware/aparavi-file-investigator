@@ -33,16 +33,23 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 	}, [isLoading, isChatStarted]);
 
 	useEffect(() => {
-		// Auto-resize textarea based on content and check for overflow
+		// Auto-resize textarea based on content
 		if (textareaRef.current) {
 			textareaRef.current.style.height = 'auto';
-			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+			const newHeight = textareaRef.current.scrollHeight;
+			textareaRef.current.style.height = `${newHeight}px`;
 
-			// Check if textarea has overflow (scrollbar appears)
-			const hasScroll = textareaRef.current.scrollHeight > textareaRef.current.clientHeight;
-			setHasOverflow(hasScroll);
+			// One-way switch: trigger vertical layout at 40px, only reset when input is cleared
+			if (!hasOverflow && newHeight >= 40) {
+				setHasOverflow(true);
+			}
 		}
-	}, [query]);
+
+		// Reset to horizontal layout only when input is completely empty
+		if (hasOverflow && query === '') {
+			setHasOverflow(false);
+		}
+	}, [query, hasOverflow]);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
