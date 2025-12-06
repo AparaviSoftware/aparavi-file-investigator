@@ -1,8 +1,16 @@
 import { WebhookResponse } from '../types';
 
 /**
- * Extract pipeline output from webhook response
- * Based on webhook docs: data.objects.{id}.text
+ * Extracts pipeline output from webhook response based on the expected structure.
+ * Returns the text field from the first object if available, otherwise returns the
+ * entire first object or falls back to the full response data.
+ *
+ * @param {WebhookResponse} responseData - The webhook response object containing pipeline output
+ *
+ * @return {any} Extracted text content, first object, or full response data as fallback
+ *
+ * @example
+ *     const output = extractPipelineOutput(webhookResponse);
  */
 export function extractPipelineOutput(responseData: WebhookResponse): any {
   try {
