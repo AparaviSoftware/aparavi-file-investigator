@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import axios, { AxiosError } from 'axios';
 import config from '../../config';
 import { AppError } from '../../middleware/errorHandler';
-import { extractPipelineOutput } from '../../utils/extractOutput';
-import { callout } from '../../utils/callout';
+import { extractPipelineOutput, callout } from '../../utils';
 import { t } from '../../translations/translations';
 import {
   ChatRequestBody,
