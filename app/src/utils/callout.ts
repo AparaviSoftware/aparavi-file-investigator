@@ -10,5 +10,5 @@
  *     await callout(promise);
  */
 export async function callout(promise: Promise<any>): Promise<any> {
-    return promise.then((data) => [null, data]).catch((err) => [err]);
+  return promise.then((data) => [null, data]).catch((err) => [err]);
 }

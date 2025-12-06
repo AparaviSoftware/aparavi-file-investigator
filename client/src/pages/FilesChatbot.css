@@ -1,0 +1,77 @@
+/* Scrollbar styles for chat messages area */
+.chat-scrollbar {
+	scrollbar-gutter: stable;
+}
+
+.chat-scrollbar::-webkit-scrollbar {
+	width: 12px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 6px;
+}
+
+.chat-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.chat-scrollbar::-webkit-scrollbar-button {
+	display: none;
+	height: 0;
+	width: 0;
+}
+
+.chat-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: #888 #f1f1f1;
+}
+
+/* Scrollbar styles for input textarea */
+.input-scrollbar::-webkit-scrollbar {
+	width: 12px;
+}
+
+.input-scrollbar::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+.input-scrollbar::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 6px;
+}
+
+.input-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.input-scrollbar::-webkit-scrollbar-button {
+	display: none;
+	height: 0;
+	width: 0;
+}
+
+.input-scrollbar {
+	scrollbar-width: thin;
+	scrollbar-color: #888 #f1f1f1;
+}
+
+/* Slide down animation for chat input */
+@keyframes slideDown {
+	from {
+		transform: translateY(-100px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.animate-slide-down {
+	animation: slideDown 700ms ease-out forwards;
+}

@@ -1,0 +1,180 @@
+{
+	"root": true,
+	"env": {
+		"es2020": true,
+		"browser": true,
+		"es6": true,
+		"node": true,
+		"jest": true,
+		"worker": true,
+		"serviceworker": true
+	},
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"project": "./tsconfig.eslint.json",
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"plugins": [
+		"@typescript-eslint",
+		"import"
+	],
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"extensions": [
+					".js",
+					".jsx",
+					".ts",
+					".tsx",
+					".mjs",
+					".cjs"
+				]
+			}
+		}
+	},
+	"rules": {
+		"no-var": "error",
+		"no-console": "off",
+		"no-alert": "error",
+		"no-useless-catch": "off",
+		"quote-props": [
+			"error",
+			"as-needed"
+		],
+		"no-unexpected-multiline": "off",
+		"no-template-curly-in-string": "error",
+		"eqeqeq": "error",
+		"no-self-compare": "error",
+		"no-trailing-spaces": [
+			"error",
+			{
+				"skipBlankLines": false,
+				"ignoreComments": false
+			}
+		],
+		"no-async-promise-executor": "off",
+		"no-prototype-builtins": "off",
+		"block-spacing": "error",
+		"no-multi-spaces": "error",
+		"no-whitespace-before-property": "error",
+		"space-before-blocks": "error",
+		"space-infix-ops": "error",
+		"space-unary-ops": [
+			"error",
+			{
+				"words": true,
+				"nonwords": false
+			}
+		],
+		"arrow-parens": [
+			"error",
+			"as-needed"
+		],
+		"no-inner-declarations": "off",
+		"no-constant-condition": "error",
+		"quotes": "off",
+		"@typescript-eslint/quotes": [
+			"error",
+			"single",
+			{
+				"avoidEscape": true
+			}
+		],
+		"indent": "off",
+		"@typescript-eslint/indent": [
+			"warn",
+			"tab"
+		],
+		"comma-dangle": "off",
+		"@typescript-eslint/comma-dangle": "error",
+		"keyword-spacing": "off",
+		"@typescript-eslint/keyword-spacing": "error",
+		"no-array-constructor": "off",
+		"@typescript-eslint/no-array-constructor": "off",
+		"no-empty-function": "off",
+		"@typescript-eslint/no-empty-function": "error",
+		"no-redeclare": "off",
+		"@typescript-eslint/no-redeclare": "off",
+		"no-shadow": "off",
+		"@typescript-eslint/no-shadow": "error",
+		"no-use-before-define": "off",
+		"@typescript-eslint/no-use-before-define": "off",
+		"no-unused-vars": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"error",
+			{
+				"args": "none",
+				"ignoreRestSiblings": true
+			}
+		],
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-floating-promises": "error",
+		"@typescript-eslint/explicit-function-return-type": "off",
+		"@typescript-eslint/camelcase": "off",
+		"@typescript-eslint/class-name-casing": "off",
+		"@typescript-eslint/no-object-literal-type-assertion": "off",
+		"@typescript-eslint/no-angle-bracket-type-assertion": "off",
+		"@typescript-eslint/no-empty-interface": "off",
+		"@typescript-eslint/no-namespace": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/array-type": 1,
+		"@typescript-eslint/no-this-alias": [
+			"error",
+			{
+				"allowDestructuring": true,
+				"allowedNames": [
+					"self"
+				]
+			}
+		],
+		"@typescript-eslint/member-ordering": [
+			"error",
+			{
+				"default": [
+					"private-static-field",
+					"private-instance-field",
+					"public-static-field",
+					"public-instance-field",
+					"private-constructor",
+					"public-constructor",
+					"private-static-method",
+					"private-instance-method",
+					"public-static-method",
+					"public-instance-method"
+				]
+			}
+		],
+		"import/prefer-default-export": "off"
+	},
+	"overrides": [
+		{
+			"files": [
+				"client/**/*.{ts,tsx}"
+			],
+			"extends": [
+				"plugin:react/recommended",
+				"plugin:react-hooks/recommended"
+			],
+			"plugins": [
+				"react",
+				"react-hooks"
+			],
+			"settings": {
+				"react": {
+					"version": "detect"
+				}
+			},
+			"rules": {
+				"react/react-in-jsx-scope": "off",
+				"react/prop-types": "off"
+			}
+		}
+	]
+}
