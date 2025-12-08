@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { ErrorResponse } from '../types';
-import { t } from '../translations/translations';
+import { ErrorResponse } from '@types';
+import { t } from '@translations/translations';
 
 // Custom error class
 export class AppError extends Error {

@@ -2,10 +2,10 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import config from './config';
-import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import config from '@config';
+import { errorHandler, notFoundHandler } from '@middleware/errorHandler';
 // Components
-import routes from './router/router';
+import routes from '@router/router';
 // Validate configuration on startup
 try {
   config.validate();

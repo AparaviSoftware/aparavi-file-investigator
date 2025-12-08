@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import PipelineOutput from './extractOutput';
-import { WebhookResponse } from '../types';
+import PipelineOutput from './pipelineOutput';
+import { WebhookResponse } from '@types';
 
 describe('PipelineOutput', () => {
 	describe('.extract', () => {

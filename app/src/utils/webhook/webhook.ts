@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios';
-import config from '../config';
-import { AppError } from '../middleware/errorHandler';
-import Logger from './logger';
-import { WebhookRequestConfig, ChatResponse } from '../types';
+import config from '@config';
+import { AppError } from '@middleware/errorHandler';
+import Logger from '@utils/logger/logger';
+import { WebhookRequestConfig, ChatResponse } from '@types';
 
 export default class Webhook {
 	/**

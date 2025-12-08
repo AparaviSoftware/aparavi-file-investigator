@@ -1,19 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
-import config from '../../config';
-import { AppError } from '../../middleware/errorHandler';
+import config from '@config';
+import { AppError } from '@middleware/errorHandler';
 import {
 	PipelineOutput,
 	Callout,
 	Logger,
 	Webhook
-} from '../../utils';
-import { t } from '../../translations/translations';
+} from '@utils';
+import { t } from '@translations/translations';
 import {
 	ChatRequestBody,
 	ChatResponse,
 	WebhookResponse
-} from '../../types';
+} from '@types';
 
 export default class ChatController {
 	/**

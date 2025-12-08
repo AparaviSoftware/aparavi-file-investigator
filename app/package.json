@@ -9,8 +9,8 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "watch": "tsc --watch",
     "clean": "rm -rf dist",
-    "test": "mocha --require tsx --extensions ts --recursive src/**/*.test.ts",
-    "test:watch": "mocha --require tsx --extensions ts --recursive src/**/*.test.ts --watch",
+    "test": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive src/**/test.ts",
+    "test:watch": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive src/**/test.ts --watch",
     "lint": "eslint . --ext .ts",
     "type-check": "tsc --noEmit",
     "preinstall": "npx only-allow pnpm"
@@ -51,6 +51,7 @@
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "tsx": "^4.21.0",
     "typescript": "^5.3.3"
   },
