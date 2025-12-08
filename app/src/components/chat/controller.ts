@@ -1,97 +1,68 @@
 import { Request, Response, NextFunction } from 'express';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import config from '../../config';
 import { AppError } from '../../middleware/errorHandler';
-import { extractPipelineOutput, callout } from '../../utils';
+import {
+	PipelineOutput,
+	Callout,
+	Logger,
+	Webhook
+} from '../../utils';
 import { t } from '../../translations/translations';
 import {
-  ChatRequestBody,
-  ChatResponse,
-  WebhookResponse,
-  WebhookRequestConfig
+	ChatRequestBody,
+	ChatResponse,
+	WebhookResponse
 } from '../../types';
 
-export class ChatController {
-  /**
-	 * Handle POST /api/chat
+export default class ChatController {
+	/**
+	 * Handles POST requests to /api/chat endpoint.
+	 * Validates request, forwards to webhook, and returns processed response.
+	 *
+	 * @param {Request} req - Express request object containing chat message or data
+	 * @param {Response} res - Express response object
+	 * @param {NextFunction} next - Express next function for error handling
+	 *
+	 * @return {Promise<void>} Resolves when response is sent
+	 *
+	 * @example
+	 *     router.post('/chat', ChatController.chat);
 	 */
-  async chat(req: Request<{}, ChatResponse, ChatRequestBody>, res: Response<ChatResponse>, next: NextFunction): Promise<void> {
-    const { message, data } = req.body;
+	static async chat(req: Request<Record<string, never>, ChatResponse, ChatRequestBody>, res: Response<ChatResponse>, next: NextFunction): Promise<void> {
+		const { message, data } = req.body;
 
-    // Validation
-    if (!message && !data) {
-      return next(new AppError(t.errors.messageOrDataRequired, 400));
-    }
+		if (!message && !data) {
+			return next(new AppError(t.errors.messageOrDataRequired, 400));
+		}
 
-    console.log('Processing chat request:', {
-      hasMessage: !!message,
-      hasData: !!data
-    });
+		Logger.info('Processing chat request', {
+			hasMessage: !!message,
+			hasData: !!data
+		});
 
-    // Prepare payload
-    const payload = data || { text: message };
+		const payload = Webhook.buildPayload(message, data);
+		const webhookConfig = Webhook.buildConfig();
 
-    // Configure webhook request
-    const webhookConfig: WebhookRequestConfig = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': config.webhook.apiKey
-      },
-      params: {
-        apikey: config.webhook.apiKey
-      },
-      timeout: config.webhook.timeout,
-      validateStatus: (status: number) => status < 500 // Don't throw on 4xx errors
-    };
+		const [error, response] = await Callout.call(
+			axios.put<WebhookResponse>(
+				config.webhook.baseUrl,
+				payload,
+				webhookConfig
+			)
+		);
 
-    // Make PUT request to webhook
-    const [error, response] = await callout(
-      axios.put<WebhookResponse>(
-        config.webhook.baseUrl,
-        payload,
-        webhookConfig
-      )
-    );
+		if (error) {
+			return next(Webhook.handleError(error));
+		}
 
-    if (error) {
-      const axiosError = error as AxiosError;
+		if (response.status !== 200) {
+			return next(new AppError('Pipeline returned an error', response.status, response.data));
+		}
 
-      console.error('Chat endpoint error:', {
-        message: (error as Error).message,
-        response: axiosError.response?.data,
-        status: axiosError.response?.status
-      });
+		const result = PipelineOutput.extract(response.data);
+		const successResponse = Webhook.buildSuccessResponse(result, response.headers);
 
-      if (axiosError.code === 'ECONNABORTED') {
-        return next(new AppError('Pipeline processing timeout - request took too long', 504));
-      }
-
-      if (axiosError.response) {
-        return next(new AppError(
-          'Pipeline processing failed',
-          axiosError.response.status,
-          axiosError.response.data
-        ));
-      }
-
-      return next(error);
-    }
-
-    // Handle non-200 responses
-    if (response.status !== 200) {
-      return next(new AppError('Pipeline returned an error', response.status, response.data));
-    }
-
-    // Extract result
-    const result = extractPipelineOutput(response.data);
-
-    res.json({
-      success: true,
-      result,
-      metadata: {
-        timestamp: new Date().toISOString(),
-        processingTime: response.headers['x-response-time']
-      }
-    });
-  }
+		res.json(successResponse);
+	}
 }

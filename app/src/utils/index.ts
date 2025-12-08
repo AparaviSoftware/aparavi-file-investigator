@@ -3,5 +3,7 @@
  * Provides centralized exports for all utility functions
  */
 
-export { callout } from './callout';
-export { extractPipelineOutput } from './extractOutput';
+export { default as Callout } from './callout';
+export { default as PipelineOutput } from './extractOutput';
+export { default as Logger } from './logger';
+export { default as Webhook } from './webhook';
