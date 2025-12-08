@@ -20,8 +20,15 @@
       "noUnusedParameters": true,
       "noImplicitReturns": true,
       "noFallthroughCasesInSwitch": true,
-      "types": ["node"]
+      "types": ["node", "mocha"]
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "**/*.test.ts"]
+    "exclude": ["node_modules", "dist"],
+    "ts-node": {
+      "compilerOptions": {
+        "module": "commonjs"
+      },
+      "transpileOnly": true,
+      "files": true
+    }
   }
