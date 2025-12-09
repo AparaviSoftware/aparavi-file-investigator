@@ -119,7 +119,7 @@ const server = app.listen(config.port, () => {
 	console.log(`
   ****************************************
   *
-  *   Aparavi Pipeline Chat Backend (TypeScript)
+  *   Aparavi - File Investigator Backend (TypeScript)
   *   Copyright (c) ${moment().year()} Aparavi
   *
   *       Environment:   ${config.nodeEnv}
