@@ -3,15 +3,15 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import config from '@config';
-import { errorHandler, notFoundHandler } from '@middleware/errorHandler';
+import { errorHandler, notFoundHandler } from '@middleware/error';
 // Components
 import routes from '@router/router';
 // Validate configuration on startup
 try {
-  config.validate();
+	config.validate();
 } catch (error) {
-  console.error('❌ Configuration error:', (error as Error).message);
-  process.exit(1);
+	console.error('❌ Configuration error:', (error as Error).message);
+	process.exit(1);
 }
 
 const app: Application = express();
@@ -25,29 +25,29 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps, curl, Postman)
-    if (!origin) return callback(null, true);
+	origin: (origin, callback) => {
+		// Allow requests with no origin (like mobile apps, curl, Postman)
+		if (!origin) return callback(null, true);
 
-    // Allow configured frontend URL
-    if (origin === config.frontend.url) {
-      return callback(null, true);
-    }
+		// Allow configured frontend URL
+		if (origin === config.frontend.url) {
+			return callback(null, true);
+		}
 
-    // In development, allow localhost on any port
-    if (config.nodeEnv === 'development' &&
+		// In development, allow localhost on any port
+		if (config.nodeEnv === 'development' &&
 			(origin.includes('localhost') || origin.includes('127.0.0.1'))) {
-      return callback(null, true);
-    }
+			return callback(null, true);
+		}
 
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['X-Response-Time'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
+		callback(new Error('Not allowed by CORS'));
+	},
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+	exposedHeaders: ['X-Response-Time'],
+	preflightContinue: false,
+	optionsSuccessStatus: 204
 }));
 
 // Body parsing
@@ -57,32 +57,46 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: config.rateLimit.windowMs,
-  max: config.rateLimit.maxRequests,
-  message: {
-    error: true,
-    message: 'Too many requests, please try again later.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false
+	windowMs: config.rateLimit.windowMs,
+	max: config.rateLimit.maxRequests,
+	message: {
+		error: true,
+		message: 'Too many requests, please try again later.'
+	},
+	standardHeaders: true,
+	legacyHeaders: false
 });
 
 app.use('/api/', limiter);
 
 // Request logging (development only)
 if (config.nodeEnv === 'development') {
-  app.use((req: Request, _res: Response, next: NextFunction) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
-  });
+	app.use((req: Request, _res: Response, next: NextFunction) => {
+		console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+		next();
+	});
 }
 
 // ============================================================================
 // ROUTES
 // ============================================================================
 
+// Healthcheck route at root
+app.get('/', (_req: Request, res: Response) => {
+	res.status(200).send(`
+		<html>
+			<head>
+				<title>Healthcheck</title>
+			</head>
+			<body>
+				<p>OK</p>
+			</body>
+		</html>
+	`);
+});
+
 // Mount component routes
-app.use('/api', routes);
+app.use('/api/', routes);
 
 // ============================================================================
 // ERROR HANDLING
@@ -99,10 +113,10 @@ app.use(errorHandler);
 // ============================================================================
 
 const server = app.listen(config.port, () => {
-  const moment = require('moment');
-  const os = require('os');
-  const tsVersion = require('typescript').version;
-  console.log(`
+	const moment = require('moment');
+	const os = require('os');
+	const tsVersion = require('typescript').version;
+	console.log(`
   ****************************************
   *
   *   Aparavi Pipeline Chat Backend (TypeScript)
@@ -133,17 +147,17 @@ const server = app.listen(config.port, () => {
 
 // Graceful shutdown
 const shutdown = (): void => {
-  console.log('\nShutting down gracefully...');
-  server.close(() => {
-    console.log('Server closed');
-    process.exit(0);
-  });
+	console.log('\nShutting down gracefully...');
+	server.close(() => {
+		console.log('Server closed');
+		process.exit(0);
+	});
 
-  // Force shutdown after 10 seconds
-  setTimeout(() => {
-    console.error('Forced shutdown');
-    process.exit(1);
-  }, 10000);
+	// Force shutdown after 10 seconds
+	setTimeout(() => {
+		console.error('Forced shutdown');
+		process.exit(1);
+	}, 10000);
 };
 
 process.on('SIGTERM', shutdown);

@@ -4,7 +4,7 @@ import sinonChai from 'sinon-chai';
 import { Request, Response } from 'express';
 import ChatController from './controller';
 import { Callout, Webhook, PipelineOutput, Logger } from '@utils';
-import { AppError } from '@middleware/errorHandler';
+import { AppError } from '@middleware/error';
 import { t } from '@translations/translations';
 
 use(sinonChai);

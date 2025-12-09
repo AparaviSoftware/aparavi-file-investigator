@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import config from '@config';
-import { AppError } from '@middleware/errorHandler';
+import { AppError } from '@middleware/error';
 import Logger from '@utils/logger/logger';
 import { WebhookRequestConfig, ChatResponse } from '@types';
 

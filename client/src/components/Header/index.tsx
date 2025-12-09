@@ -22,7 +22,7 @@ export default function Header() {
 				/>
 			</a>
 			<a
-				href="https://dtc.aparavi.com/projects/new?templateId=74ef36f1-19c3-4a22-9fa0-b79d9aa42834"
+				href={t.header.createChatbotUrl}
 				target="_blank"
 				rel="noopener noreferrer"
 				className="bg-orange-400 hover:bg-orange-500 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 whitespace-nowrap"

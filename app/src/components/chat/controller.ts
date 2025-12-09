@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import axios from 'axios';
 import config from '@config';
-import { AppError } from '@middleware/errorHandler';
+import { AppError } from '@middleware/error';
 import {
 	PipelineOutput,
 	Callout,
@@ -41,28 +41,38 @@ export default class ChatController {
 			hasData: !!data
 		});
 
-		const payload = Webhook.buildPayload(message, data);
-		const webhookConfig = Webhook.buildConfig();
+		// TODO: Remove sample response when webhook is ready
+		const sampleResponse: ChatResponse = {
+			success: true,
+			message: `This is a sample response to your message: "${message}". The webhook integration is not yet configured, so this is a placeholder response. Once the webhook is set up, this will be replaced with actual AI-generated responses from the Aparavi pipeline.`,
+			timestamp: new Date().toISOString()
+		};
 
-		const [error, response] = await Callout.call(
-			axios.put<WebhookResponse>(
-				config.webhook.baseUrl,
-				payload,
-				webhookConfig
-			)
-		);
+		res.json(sampleResponse);
 
-		if (error) {
-			return next(Webhook.handleError(error));
-		}
-
-		if (response.status !== 200) {
-			return next(new AppError('Pipeline returned an error', response.status, response.data));
-		}
-
-		const result = PipelineOutput.extract(response.data);
-		const successResponse = Webhook.buildSuccessResponse(result, response.headers);
-
-		res.json(successResponse);
+		// TODO: Uncomment when webhook is ready
+		// const payload = Webhook.buildPayload(message, data);
+		// const webhookConfig = Webhook.buildConfig();
+		//
+		// const [error, response] = await Callout.call(
+		// 	axios.put<WebhookResponse>(
+		// 		config.webhook.baseUrl,
+		// 		payload,
+		// 		webhookConfig
+		// 	)
+		// );
+		//
+		// if (error) {
+		// 	return next(Webhook.handleError(error));
+		// }
+		//
+		// if (response.status !== 200) {
+		// 	return next(new AppError('Pipeline returned an error', response.status, response.data));
+		// }
+		//
+		// const result = PipelineOutput.extract(response.data);
+		// const successResponse = Webhook.buildSuccessResponse(result, response.headers);
+		//
+		// res.json(successResponse);
 	}
 }

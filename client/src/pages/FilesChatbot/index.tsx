@@ -1,14 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import Header from '../components/Header';
-import HeroBanner from '../components/HeroBanner';
-import TitleSection from '../components/TitleSection';
-import SuggestedQuestions from '../components/SuggestedQuestions';
-import InputBox from '../components/InputBox';
-import ChatMessage from '../components/ChatMessage';
-import LoadingDots from '../components/LoadingDots';
-import { t } from '../translations/en';
-import './FilesChatbot.css';
+import Header from '../../components/Header';
+import HeroBanner from '../../components/HeroBanner';
+import TitleSection from '../../components/TitleSection';
+import SuggestedQuestions from '../../components/SuggestedQuestions';
+import InputBox from '../../components/InputBox';
+import ChatMessage from '../../components/ChatMessage';
+import LoadingDots from '../../components/LoadingDots';
+import { sendChatMessage } from '../../services/api';
+import { t } from '../../translations/en';
+import './styles.css';
 
 interface Message {
 	text: string;
@@ -46,7 +47,7 @@ export default function FilesChatbot() {
 		toast.error(t.errors.outOfQueries);
 	};
 
-	const handleSubmit = (question: string) => {
+	const handleSubmit = async (question: string) => {
 		if (!question.trim()) return;
 
 		if (queriesLeft === 0) {
@@ -78,15 +79,24 @@ export default function FilesChatbot() {
 			setQuery('');
 			setIsLoading(true);
 
-			// Simulate AI response after a short delay
-			setTimeout(() => {
+			try {
+				const response = await sendChatMessage(question);
 				const aiMessage: Message = {
-					text: t.messages.placeholderResponse,
+					text: response.message,
 					isUser: false
 				};
 				setMessages(prev => [...prev, aiMessage]);
+			} catch (error) {
+				const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+				toast.error(errorMessage);
+				const aiMessage: Message = {
+					text: `Error: ${errorMessage}`,
+					isUser: false
+				};
+				setMessages(prev => [...prev, aiMessage]);
+			} finally {
 				setIsLoading(false);
-			}, 1000);
+			}
 		}
 	};
 
@@ -94,7 +104,7 @@ export default function FilesChatbot() {
 		setQuery('');
 	};
 
-	const handleRegenerate = (index: number) => {
+	const handleRegenerate = async (index: number) => {
 		if (queriesLeft === 0) {
 			showOutOfQueriesToast();
 			return;
@@ -103,24 +113,35 @@ export default function FilesChatbot() {
 		// Find the user message that prompted this response
 		const userMessageIndex = index - 1;
 		if (userMessageIndex >= 0 && messages[userMessageIndex].isUser) {
+			const userQuestion = messages[userMessageIndex].text;
+
 			// Remove the AI response
 			setMessages(prev => prev.slice(0, index));
 			setQueriesLeft(prev => prev - 1);
 			setIsLoading(true);
 
-			// Simulate regenerating the response
-			setTimeout(() => {
+			try {
+				const response = await sendChatMessage(userQuestion);
 				const aiMessage: Message = {
-					text: t.messages.regeneratedResponse,
+					text: response.message,
 					isUser: false
 				};
 				setMessages(prev => [...prev, aiMessage]);
+			} catch (error) {
+				const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+				toast.error(errorMessage);
+				const aiMessage: Message = {
+					text: `Error: ${errorMessage}`,
+					isUser: false
+				};
+				setMessages(prev => [...prev, aiMessage]);
+			} finally {
 				setIsLoading(false);
-			}, 1000);
+			}
 		}
 	};
 
-	const handleEdit = (index: number, newMessage: string) => {
+	const handleEdit = async (index: number, newMessage: string) => {
 		if (queriesLeft === 0) {
 			showOutOfQueriesToast();
 			return;
@@ -136,15 +157,24 @@ export default function FilesChatbot() {
 		setQueriesLeft(prev => prev - 1);
 		setIsLoading(true);
 
-		// Simulate generating a new response for the edited message
-		setTimeout(() => {
+		try {
+			const response = await sendChatMessage(newMessage);
 			const aiMessage: Message = {
-				text: t.messages.editedResponse,
+				text: response.message,
 				isUser: false
 			};
 			setMessages(prev => [...prev, aiMessage]);
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+			toast.error(errorMessage);
+			const aiMessage: Message = {
+				text: `Error: ${errorMessage}`,
+				isUser: false
+			};
+			setMessages(prev => [...prev, aiMessage]);
+		} finally {
 			setIsLoading(false);
-		}, 1000);
+		}
 	};
 
 	return (

@@ -1,22 +1,8 @@
 /** Packages */
 import path from 'path';
 import fs from 'fs';
-import { Request, Response } from 'express';
 /** Router */
 import router from '.';
-/** Handle healthcheck */
-router.get('/', (_: Request, res: Response) => {
-  res.status(200).send(`
-        <html>
-            <head>
-                <title>Healthcheck</title>
-            </head>
-            <body>
-                <p>OK</p>
-            </body>
-        </html>
-    `);
-});
 /**
  * Create a map of directory names from path
  *
@@ -38,13 +24,14 @@ function createDirectoryNamesMap(path: string) {
  * Import all the component directories and setup the routes
  */
 const basePath = path.join(__dirname, '../components');
-const isTestEnv = process.env.NODE_ENV === 'test';
+const isProduction = process.env.NODE_ENV === 'production';
 createDirectoryNamesMap(basePath).forEach((componentName) => {
   const routesPath = `${basePath}/${componentName}/routes.${
-    isTestEnv ? 'ts' : 'js'
+    isProduction ? 'js' : 'ts'
   }`;
   if (fs.existsSync(routesPath)) {
-    import(routesPath);
+    const componentRouter = require(routesPath).default;
+    router.use('/', componentRouter);
   }
 });
 /** Export API routes */

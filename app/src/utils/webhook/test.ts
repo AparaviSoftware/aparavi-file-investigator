@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { AxiosError } from 'axios';
 import Webhook from './webhook';
-import { AppError } from '@middleware/errorHandler';
+import { AppError } from '@middleware/error';
 import Logger from '@utils/logger/logger';
 
 use(sinonChai);
