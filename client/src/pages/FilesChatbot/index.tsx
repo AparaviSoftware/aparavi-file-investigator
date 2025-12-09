@@ -8,23 +8,39 @@ import InputBox from '../../components/InputBox';
 import ChatMessage from '../../components/ChatMessage';
 import LoadingDots from '../../components/LoadingDots';
 import { sendChatMessage } from '../../services/api';
+import {
+	loadConversation,
+	addUserMessage,
+	addAssistantMessage,
+	editMessage,
+	trackRegeneration,
+	hasReachedQueryLimit,
+	getConversationStats,
+	clearConversation,
+	type ConversationState
+} from '../../services/conversationStorage';
 import { t } from '../../translations/en';
 import './styles.css';
 
-interface Message {
-	text: string;
-	isUser: boolean;
-}
-
 export default function FilesChatbot() {
 	const [query, setQuery] = useState('');
-	const [queriesLeft, setQueriesLeft] = useState(10);
-	const [messages, setMessages] = useState<Message[]>([]);
+	const [conversationState, setConversationState] = useState<ConversationState | null>(null);
 	const [isChatStarted, setIsChatStarted] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [chatInputTransform, setChatInputTransform] = useState(0);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const mainInputRef = useRef<HTMLDivElement>(null);
+
+	// Load conversation on mount
+	useEffect(() => {
+		const state = loadConversation();
+		setConversationState(state);
+
+		// If conversation has messages, start in chat mode
+		if (state.messages.length > 0) {
+			setIsChatStarted(true);
+		}
+	}, []);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,7 +48,7 @@ export default function FilesChatbot() {
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [messages, isLoading]);
+	}, [conversationState?.messages, isLoading]);
 
 	useEffect(() => {
 		if (isChatStarted && chatInputTransform !== 0) {
@@ -48,55 +64,40 @@ export default function FilesChatbot() {
 	};
 
 	const handleSubmit = async (question: string) => {
-		if (!question.trim()) return;
+		if (!question.trim() || !conversationState) return;
 
-		if (queriesLeft === 0) {
+		if (hasReachedQueryLimit(conversationState)) {
 			showOutOfQueriesToast();
 			return;
 		}
 
-		if (queriesLeft > 0) {
-			// Measure main input position before chat starts
-			if (mainInputRef.current) {
-				const rect = mainInputRef.current.getBoundingClientRect();
-				// Calculate distance from main input bottom to viewport bottom
-				// This positions the chat input to start at the main input's location
-				const distanceFromBottom = window.innerHeight - rect.bottom - 80;
-				setChatInputTransform(distanceFromBottom);
-			}
+		// Measure main input position before chat starts
+		if (mainInputRef.current && !isChatStarted) {
+			const rect = mainInputRef.current.getBoundingClientRect();
+			const distanceFromBottom = window.innerHeight - rect.bottom - 80;
+			setChatInputTransform(distanceFromBottom);
+		}
 
-			// Start chat mode
-			setIsChatStarted(true);
+		// Start chat mode
+		setIsChatStarted(true);
 
-			// Add user message
-			const userMessage: Message = {
-				text: question,
-				isUser: true
-			};
-			setMessages(prev => [...prev, userMessage]);
+		// Add user message
+		const newState = addUserMessage(conversationState, question);
+		setConversationState(newState);
+		setQuery('');
+		setIsLoading(true);
 
-			setQueriesLeft(prev => prev - 1);
-			setQuery('');
-			setIsLoading(true);
-
-			try {
-				const response = await sendChatMessage(question);
-				const aiMessage: Message = {
-					text: response.message,
-					isUser: false
-				};
-				setMessages(prev => [...prev, aiMessage]);
-			} catch (error) {
-				const errorMessage = error instanceof Error ? error.message : 'An error occurred';
-				toast.error(errorMessage);
-				const aiMessage: Message = {
-					text: `Error: ${errorMessage}`,
-					isUser: false
-				};
-				setMessages(prev => [...prev, aiMessage]);
-			} finally {
-				setIsLoading(false);
-			}
+		try {
+			const response = await sendChatMessage(question);
+			const finalState = addAssistantMessage(newState, response.message);
+			setConversationState(finalState);
+		} catch (error) {
+			const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+			toast.error(errorMessage);
+			const finalState = addAssistantMessage(newState, `Error: ${errorMessage}`);
+			setConversationState(finalState);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -105,36 +106,40 @@ export default function FilesChatbot() {
 	};
 
 	const handleRegenerate = async (index: number) => {
-		if (queriesLeft === 0) {
+		if (!conversationState) return;
+
+		if (hasReachedQueryLimit(conversationState)) {
 			showOutOfQueriesToast();
 			return;
 		}
 
 		// Find the user message that prompted this response
 		const userMessageIndex = index - 1;
-		if (userMessageIndex >= 0 && messages[userMessageIndex].isUser) {
-			const userQuestion = messages[userMessageIndex].text;
+		const userMessage = conversationState.messages[userMessageIndex];
 
-			// Remove the AI response
-			setMessages(prev => prev.slice(0, index));
-			setQueriesLeft(prev => prev - 1);
+		if (userMessageIndex >= 0 && userMessage?.role === 'user') {
+			const userQuestion = userMessage.content;
+
+			// Remove the AI response and all messages after it
+			const truncatedState = {
+				...conversationState,
+				messages: conversationState.messages.slice(0, index)
+			};
+
+			// Track the regeneration (without creating a new query)
+			const newState = trackRegeneration(truncatedState);
+			setConversationState(newState);
 			setIsLoading(true);
 
 			try {
 				const response = await sendChatMessage(userQuestion);
-				const aiMessage: Message = {
-					text: response.message,
-					isUser: false
-				};
-				setMessages(prev => [...prev, aiMessage]);
+				const finalState = addAssistantMessage(newState, response.message);
+				setConversationState(finalState);
 			} catch (error) {
 				const errorMessage = error instanceof Error ? error.message : 'An error occurred';
 				toast.error(errorMessage);
-				const aiMessage: Message = {
-					text: `Error: ${errorMessage}`,
-					isUser: false
-				};
-				setMessages(prev => [...prev, aiMessage]);
+				const finalState = addAssistantMessage(newState, `Error: ${errorMessage}`);
+				setConversationState(finalState);
 			} finally {
 				setIsLoading(false);
 			}
@@ -142,46 +147,61 @@ export default function FilesChatbot() {
 	};
 
 	const handleEdit = async (index: number, newMessage: string) => {
-		if (queriesLeft === 0) {
+		if (!conversationState) return;
+
+		if (hasReachedQueryLimit(conversationState)) {
 			showOutOfQueriesToast();
 			return;
 		}
 
-		// Update the user message and remove all messages after it
-		setMessages(prev => {
-			const updated = [...prev];
-			updated[index] = { text: newMessage, isUser: true };
-			return updated.slice(0, index + 1);
-		});
+		const messageToEdit = conversationState.messages[index];
+		if (!messageToEdit) return;
 
-		setQueriesLeft(prev => prev - 1);
+		// Edit the message and remove all messages after it
+		const editedState = editMessage(conversationState, messageToEdit.id, newMessage);
+		const truncatedState = {
+			...editedState,
+			messages: editedState.messages.slice(0, index + 1)
+		};
+
+		setConversationState(truncatedState);
 		setIsLoading(true);
 
 		try {
 			const response = await sendChatMessage(newMessage);
-			const aiMessage: Message = {
-				text: response.message,
-				isUser: false
-			};
-			setMessages(prev => [...prev, aiMessage]);
+			const finalState = addAssistantMessage(truncatedState, response.message);
+			setConversationState(finalState);
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : 'An error occurred';
 			toast.error(errorMessage);
-			const aiMessage: Message = {
-				text: `Error: ${errorMessage}`,
-				isUser: false
-			};
-			setMessages(prev => [...prev, aiMessage]);
+			const finalState = addAssistantMessage(truncatedState, `Error: ${errorMessage}`);
+			setConversationState(finalState);
 		} finally {
 			setIsLoading(false);
 		}
 	};
 
+	const handleClearConversation = () => {
+		const newState = clearConversation();
+		setConversationState(newState);
+		setIsChatStarted(false);
+		setQuery('');
+	};
+
+	if (!conversationState) {
+		return null; // Loading state
+	}
+
+	const stats = getConversationStats(conversationState);
+
 	return (
 		<>
 			<Toaster position="top-center" />
 			<div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-				<Header />
+				<Header
+					hasMessages={conversationState.messages.length > 0}
+					onClearConversation={handleClearConversation}
+				/>
 
 				{/* Main Content */}
 				<main className={`flex-1 flex flex-col relative min-h-0 ${isChatStarted ? 'overflow-hidden' : 'overflow-y-auto'}`}>
@@ -222,13 +242,13 @@ export default function FilesChatbot() {
 								<div ref={mainInputRef} className="transition-all duration-700">
 									<InputBox
 										query={query}
-										queriesLeft={queriesLeft}
-										maxQueries={10}
+										queriesLeft={stats.queriesRemaining}
+										maxQueries={stats.queryLimit}
 										onQueryChange={setQuery}
 										onSubmit={handleSubmit}
 										onClear={handleClear}
 										isChatStarted={isChatStarted}
-										disabled={queriesLeft === 0 || isLoading}
+										disabled={hasReachedQueryLimit(conversationState) || isLoading}
 										isLoading={isLoading}
 									/>
 								</div>
@@ -240,13 +260,13 @@ export default function FilesChatbot() {
 								{/* Chat Messages Area - scrollable container spans full width */}
 								<div className="chat-scrollbar flex-1 overflow-y-scroll animate-fade-in min-h-0 py-4 sm:py-6">
 									<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 space-y-3 sm:space-y-4">
-										{messages.map((message, index) => (
+										{conversationState.messages.map((message, index) => (
 											<ChatMessage
-												key={index}
-												message={message.text}
-												isUser={message.isUser}
-												onRegenerate={!message.isUser ? () => handleRegenerate(index) : undefined}
-												onEdit={message.isUser ? newMessage => handleEdit(index, newMessage) : undefined}
+												key={message.id}
+												message={message.content}
+												isUser={message.role === 'user'}
+												onRegenerate={message.role === 'assistant' ? () => handleRegenerate(index) : undefined}
+												onEdit={message.role === 'user' ? newMessage => handleEdit(index, newMessage) : undefined}
 											/>
 										))}
 										{isLoading && <LoadingDots />}
@@ -265,13 +285,13 @@ export default function FilesChatbot() {
 									<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
 										<InputBox
 											query={query}
-											queriesLeft={queriesLeft}
-											maxQueries={10}
+											queriesLeft={stats.queriesRemaining}
+											maxQueries={stats.queryLimit}
 											onQueryChange={setQuery}
 											onSubmit={handleSubmit}
 											onClear={handleClear}
 											isChatStarted={isChatStarted}
-											disabled={queriesLeft === 0 || isLoading}
+											disabled={hasReachedQueryLimit(conversationState) || isLoading}
 											isLoading={isLoading}
 										/>
 									</div>
