@@ -64,7 +64,7 @@ export default function InputBox({ query, queriesLeft, maxQueries, onQueryChange
 				<textarea
 					ref={textareaRef}
 					value={query}
-					onChange={(e) => onQueryChange(e.target.value)}
+					onChange={e => onQueryChange(e.target.value)}
 					onKeyDown={handleKeyDown}
 					placeholder={disabled ? t.input.placeholderDisabled : t.input.placeholder}
 					className={`input-scrollbar outline-none text-sm sm:text-base text-gray-800 placeholder-gray-400 resize-none overflow-y-auto min-h-[24px] max-h-[200px] ${hasOverflow ? 'w-full' : 'flex-1'}`}

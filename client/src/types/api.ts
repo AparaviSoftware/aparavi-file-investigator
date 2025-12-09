@@ -1,6 +1,9 @@
+import { FingerprintData } from '../services/fingerprint';
+
 export interface ChatRequestBody {
 	message?: string;
 	data?: any;
+	fingerprint?: FingerprintData;
 }
 
 export interface ChatResponse {

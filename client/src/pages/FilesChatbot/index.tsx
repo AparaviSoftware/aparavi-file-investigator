@@ -246,7 +246,7 @@ export default function FilesChatbot() {
 												message={message.text}
 												isUser={message.isUser}
 												onRegenerate={!message.isUser ? () => handleRegenerate(index) : undefined}
-												onEdit={message.isUser ? (newMessage) => handleEdit(index, newMessage) : undefined}
+												onEdit={message.isUser ? newMessage => handleEdit(index, newMessage) : undefined}
 											/>
 										))}
 										{isLoading && <LoadingDots />}

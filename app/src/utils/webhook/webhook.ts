@@ -32,7 +32,7 @@ export default class Webhook {
 		return {
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': config.webhook.apiKey
+				Authorization: config.webhook.apiKey
 			},
 			params: {
 				apikey: config.webhook.apiKey

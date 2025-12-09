@@ -65,7 +65,8 @@ describe('ChatController', () => {
 
 				expect(loggerInfoStub).to.have.been.calledWith('Processing chat request', {
 					hasMessage: true,
-					hasData: false
+					hasData: false,
+					hasFingerprint: false
 				});
 			});
 
@@ -91,7 +92,8 @@ describe('ChatController', () => {
 
 				expect(loggerInfoStub).to.have.been.calledWith('Processing chat request', {
 					hasMessage: false,
-					hasData: true
+					hasData: true,
+					hasFingerprint: false
 				});
 			});
 
@@ -257,7 +259,8 @@ describe('ChatController', () => {
 
 				expect(loggerInfoStub).to.have.been.calledWith('Processing chat request', {
 					hasMessage: true,
-					hasData: true
+					hasData: true,
+					hasFingerprint: false
 				});
 			});
 		});

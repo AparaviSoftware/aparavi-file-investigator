@@ -10,6 +10,6 @@ export default class Callout {
 	 *     await Callout.call(promise);
 	 */
 	static async call(promise: Promise<any>): Promise<any> {
-		return promise.then((data) => [null, data]).catch((err) => [err]);
+		return promise.then(data => [null, data]).catch(err => [err]);
 	}
 }

@@ -1,4 +1,5 @@
 import { ChatRequestBody, ChatResponse, ErrorResponse } from '../types/api';
+import { getFingerprint } from './fingerprint';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -13,8 +14,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
  *     const response = await sendChatMessage('What files do you have?');
  */
 export async function sendChatMessage(message: string): Promise<ChatResponse> {
+	const fingerprintData = getFingerprint();
+
 	const requestBody: ChatRequestBody = {
-		message
+		message,
+		fingerprint: fingerprintData
 	};
 
 	const response = await fetch(`${API_BASE_URL}/api/chat`, {

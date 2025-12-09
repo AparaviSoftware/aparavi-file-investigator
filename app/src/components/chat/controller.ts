@@ -38,7 +38,8 @@ export default class ChatController {
 
 		Logger.info('Processing chat request', {
 			hasMessage: !!message,
-			hasData: !!data
+			hasData: !!data,
+			hasFingerprint: !!req.fingerprint
 		});
 
 		// TODO: Remove sample response when webhook is ready

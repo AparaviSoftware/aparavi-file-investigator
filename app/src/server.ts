@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import config from '@config';
 import { errorHandler, notFoundHandler } from '@middleware/error';
+import { fingerprintMiddleware } from '@middleware/fingerprint';
 // Components
 import routes from '@router/router';
 // Validate configuration on startup
@@ -55,7 +56,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.text());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// Fingerprint extraction and logging
+app.use(fingerprintMiddleware);
+
+// Rate limiting - uses fingerprint if available, falls back to IP
 const limiter = rateLimit({
 	windowMs: config.rateLimit.windowMs,
 	max: config.rateLimit.maxRequests,
@@ -64,7 +68,15 @@ const limiter = rateLimit({
 		message: 'Too many requests, please try again later.'
 	},
 	standardHeaders: true,
-	legacyHeaders: false
+	legacyHeaders: false,
+	keyGenerator: (req: Request): string => {
+		// Use fingerprint ID if available (set by fingerprint middleware)
+		if (req.fingerprintId) {
+			return `fingerprint:${req.fingerprintId}`;
+		}
+		// Fall back to IP address
+		return req.ip || req.socket.remoteAddress || 'unknown';
+	}
 });
 
 app.use('/api/', limiter);
