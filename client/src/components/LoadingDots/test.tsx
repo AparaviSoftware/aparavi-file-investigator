@@ -9,7 +9,7 @@ describe('LoadingDots', () => {
 			renderWithProviders(<LoadingDots />);
 
 			const dots = screen.getAllByRole('generic').filter(
-				(el) => el.className.includes('animate-bounce') && el.className.includes('rounded-full')
+				el => el.className.includes('animate-bounce') && el.className.includes('rounded-full')
 			);
 
 			expect(dots).toHaveLength(3);

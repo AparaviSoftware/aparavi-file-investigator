@@ -25,7 +25,7 @@ describe('SuggestedQuestions', () => {
 				/>
 			);
 
-			mockQuestions.forEach((question) => {
+			mockQuestions.forEach(question => {
 				expect(screen.getByText(question)).toBeInTheDocument();
 			});
 		});
@@ -50,7 +50,7 @@ describe('SuggestedQuestions', () => {
 				/>
 			);
 
-			mockQuestions.forEach((question) => {
+			mockQuestions.forEach(question => {
 				const boldElement = screen.getByText(question);
 				expect(boldElement.tagName).toBe('B');
 			});
@@ -160,7 +160,7 @@ describe('SuggestedQuestions', () => {
 			);
 
 			const buttons = screen.getAllByRole('button');
-			buttons.forEach((button) => {
+			buttons.forEach(button => {
 				expect(button).toHaveClass('bg-white', 'border', 'border-gray-200', 'rounded-lg');
 			});
 		});

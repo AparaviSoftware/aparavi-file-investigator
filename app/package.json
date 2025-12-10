@@ -1,43 +1,62 @@
 {
-    "name": "pipeline-chat-backend",
-    "version": "1.0.0",
-    "description": "Secure TypeScript backend for Aparavi pipeline chat interface",
-    "main": "dist/server.js",
-    "scripts": {
-      "build": "tsc",
-      "start": "node dist/server.js",
-      "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-      "watch": "tsc --watch",
-      "clean": "rm -rf dist",
-      "test": "ts-node test-webhook.ts",
-      "lint": "eslint . --ext .ts",
-      "type-check": "tsc --noEmit",
-      "preinstall": "npx only-allow pnpm"
-    },
-    "keywords": ["webhook", "proxy", "pipeline", "api", "typescript"],
-    "author": "Aparavi",
-    "license": "MIT",
-    "dependencies": {
-      "express": "^4.18.2",
-      "cors": "^2.8.5",
-      "axios": "^1.6.7",
-      "dotenv": "^16.4.5",
-      "helmet": "^7.1.0",
-      "express-rate-limit": "^7.1.5"
-    },
-    "devDependencies": {
-      "@types/express": "^4.17.21",
-      "@types/cors": "^2.8.17",
-      "@types/node": "^20.11.17",
-      "@typescript-eslint/eslint-plugin": "^6.21.0",
-      "@typescript-eslint/parser": "^6.21.0",
-      "eslint": "^8.56.0",
-      "ts-node": "^10.9.2",
-      "ts-node-dev": "^2.0.0",
-      "typescript": "^5.3.3"
-    },
-    "engines": {
-      "node": ">=18.0.0",
-      "pnpm": ">=8.0.0"
-    }
+  "name": "pipeline-chat-backend",
+  "version": "1.0.0",
+  "description": "Secure TypeScript backend for Aparavi pipeline chat interface",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive src/**/test.ts",
+    "test:watch": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive src/**/test.ts --watch",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "keywords": [
+    "webhook",
+    "proxy",
+    "pipeline",
+    "api",
+    "typescript"
+  ],
+  "author": "Aparavi",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "4.3.20",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.11.17",
+    "@types/sinon": "^21.0.0",
+    "@types/sinon-chai": "^4.0.0",
+    "@types/supertest": "^6.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "chai": "4.5.0",
+    "eslint": "^8.56.0",
+    "mocha": "^11.7.5",
+    "sinon": "^21.0.0",
+    "sinon-chai": "^4.0.1",
+    "supertest": "^7.1.4",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
   }
+}

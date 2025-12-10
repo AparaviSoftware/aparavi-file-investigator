@@ -8,6 +8,10 @@
 		"dev": "concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./app dev\" \"pnpm --filter ./client dev\"",
 		"build": "pnpm --filter ./app build && pnpm --filter ./client build",
 		"install:all": "pnpm install --filter ./app --filter ./client",
+		"test": "pnpm --filter ./app test && pnpm --filter ./client test",
+		"test:app": "pnpm --filter ./app test",
+		"test:client": "pnpm --filter ./client test",
+		"test:watch": "concurrently -n \"app,client\" -c \"blue,green\" \"pnpm --filter ./app test:watch\" \"pnpm --filter ./client test\"",
 		"lint": "eslint . --ext .ts,.tsx,.js,.jsx",
 		"lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix"
 	},
