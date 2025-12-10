@@ -1,4 +1,4 @@
-import './LoadingDots.css';
+import './styles.css';
 
 export default function LoadingDots() {
 	return (
