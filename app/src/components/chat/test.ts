@@ -59,7 +59,7 @@ describe('ChatController', () => {
 		context('when request has valid message', () => {
 			it('should log request with hasMessage true', async () => {
 				req.body = { message: 'test message' };
-				calloutStub.resolves([null, { status: 200, data: { data: { objects: {} } }, headers: {} }]);
+				calloutStub.resolves([null, { status: 200, data: { answers: ['test response'] }, headers: {} }]);
 
 				await ChatController.chat(req as any, res as any, next);
 
@@ -70,11 +70,10 @@ describe('ChatController', () => {
 				});
 			});
 
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should build payload with message', async () => {
+			it('should build payload with message', async () => {
 				const buildPayloadSpy = sinon.spy(Webhook, 'buildPayload');
 				req.body = { message: 'test message' };
-				calloutStub.resolves([null, { status: 200, data: { data: { objects: {} } }, headers: {} }]);
+				calloutStub.resolves([null, { status: 200, data: { answers: ['test response'] }, headers: {} }]);
 
 				await ChatController.chat(req as any, res as any, next);
 
@@ -86,7 +85,7 @@ describe('ChatController', () => {
 			it('should log request with hasData true', async () => {
 				const data = { key: 'value' };
 				req.body = { data };
-				calloutStub.resolves([null, { status: 200, data: { data: { objects: {} } }, headers: {} }]);
+				calloutStub.resolves([null, { status: 200, data: { answers: ['test response'] }, headers: {} }]);
 
 				await ChatController.chat(req as any, res as any, next);
 
@@ -97,12 +96,11 @@ describe('ChatController', () => {
 				});
 			});
 
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should build payload with data', async () => {
+			it('should build payload with data', async () => {
 				const buildPayloadSpy = sinon.spy(Webhook, 'buildPayload');
 				const data = { key: 'value' };
 				req.body = { data };
-				calloutStub.resolves([null, { status: 200, data: { data: { objects: {} } }, headers: {} }]);
+				calloutStub.resolves([null, { status: 200, data: { answers: ['test response'] }, headers: {} }]);
 
 				await ChatController.chat(req as any, res as any, next);
 
@@ -111,8 +109,7 @@ describe('ChatController', () => {
 		});
 
 		context('when webhook request fails', () => {
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should call next with handled error', async () => {
+			it('should call next with handled error', async () => {
 				const handleErrorSpy = sinon.spy(Webhook, 'handleError');
 				const error = new Error('Network error');
 				req.body = { message: 'test' };
@@ -124,8 +121,7 @@ describe('ChatController', () => {
 				expect(next).to.have.been.calledOnce;
 			});
 
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should not call response.json when error occurs', async () => {
+			it('should not call response.json when error occurs', async () => {
 				const error = new Error('Network error');
 				req.body = { message: 'test' };
 				calloutStub.resolves([error, undefined]);
@@ -137,8 +133,7 @@ describe('ChatController', () => {
 		});
 
 		context('when webhook returns non-200 status', () => {
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should call next with AppError for 400 status', async () => {
+			it('should call next with AppError for 400 status', async () => {
 				req.body = { message: 'test' };
 				const responseData = { error: 'Bad Request' };
 				calloutStub.resolves([null, {
@@ -156,8 +151,7 @@ describe('ChatController', () => {
 				expect(error.status).to.equal(400);
 			});
 
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should call next with AppError for 500 status', async () => {
+			it('should call next with AppError for 500 status', async () => {
 				req.body = { message: 'test' };
 				calloutStub.resolves([null, {
 					status: 500,
@@ -173,18 +167,11 @@ describe('ChatController', () => {
 		});
 
 		context('when webhook returns successful response', () => {
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should extract pipeline output and build success response', async () => {
+			it('should extract pipeline output and build success response', async () => {
 				const extractSpy = sinon.spy(PipelineOutput, 'extract');
 				const buildSuccessSpy = sinon.spy(Webhook, 'buildSuccessResponse');
 				const responseData = {
-					data: {
-						objects: {
-							'obj-123': {
-								text: 'Pipeline result'
-							}
-						}
-					}
+					answers: ['Pipeline result text']
 				};
 				const headers = { 'x-response-time': '100ms' };
 				req.body = { message: 'test' };
@@ -200,16 +187,9 @@ describe('ChatController', () => {
 				expect(buildSuccessSpy).to.have.been.called;
 			});
 
-			// TODO: Fix when webhook integration is enabled
-			it.skip('should send JSON response with success data', async () => {
+			it('should send JSON response with success data', async () => {
 				const responseData = {
-					data: {
-						objects: {
-							'obj-123': {
-								text: 'Pipeline result'
-							}
-						}
-					}
+					answers: ['Pipeline result text']
 				};
 				req.body = { message: 'test' };
 				calloutStub.resolves([null, {
@@ -223,19 +203,13 @@ describe('ChatController', () => {
 				expect(res.json).to.have.been.calledOnce;
 				const response = (res.json as sinon.SinonStub).firstCall.args[0];
 				expect(response).to.have.property('success', true);
-				expect(response).to.have.property('result');
+				expect(response).to.have.property('message');
 				expect(response).to.have.property('metadata');
 			});
 
 			it('should not call next when successful', async () => {
 				const responseData = {
-					data: {
-						objects: {
-							'obj-123': {
-								text: 'Pipeline result'
-							}
-						}
-					}
+					answers: ['Pipeline result text']
 				};
 				req.body = { message: 'test' };
 				calloutStub.resolves([null, {
@@ -253,7 +227,7 @@ describe('ChatController', () => {
 		context('when request has both message and data', () => {
 			it('should log both as true', async () => {
 				req.body = { message: 'test message', data: { key: 'value' } };
-				calloutStub.resolves([null, { status: 200, data: { data: { objects: {} } }, headers: {} }]);
+				calloutStub.resolves([null, { status: 200, data: { answers: ['test response'] }, headers: {} }]);
 
 				await ChatController.chat(req as any, res as any, next);
 

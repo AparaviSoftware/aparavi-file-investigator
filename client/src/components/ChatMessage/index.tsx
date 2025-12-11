@@ -1,5 +1,8 @@
 import { Copy, RefreshCw, Edit2, Check, X } from 'lucide-react';
 import { useState, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import './styles.css';
 
 interface ChatMessageProps {
 	message: string;
@@ -17,6 +20,7 @@ export default function ChatMessage({ message, isUser, onRegenerate, onEdit }: C
 
 	// Add zero-width spaces to long strings without spaces to allow wrapping
 	const formatMessage = (text: string): string => {
+		if (!text) return '';
 		const maxSegmentLength = 50;
 		return text.split(' ').map(word => {
 			if (word.length > maxSegmentLength) {
@@ -88,7 +92,15 @@ export default function ChatMessage({ message, isUser, onRegenerate, onEdit }: C
 						</>
 					) : (
 						<>
-							<p className="text-sm leading-relaxed break-words">{formatMessage(message)}</p>
+							{isUser ? (
+								<p className="text-sm leading-relaxed break-words">{formatMessage(message)}</p>
+							) : (
+								<div className="markdown-content text-sm leading-relaxed">
+									<ReactMarkdown remarkPlugins={[remarkGfm]}>
+										{message}
+									</ReactMarkdown>
+								</div>
+							)}
 							{!isUser && (
 								<div className="flex justify-start gap-2 mt-2">
 									<button

@@ -11,13 +11,13 @@ export default class Webhook {
 	 * @param {string | undefined} message - The message text
 	 * @param {any} data - The data object
 	 *
-	 * @return {any} Payload object for webhook request
+	 * @return {string} Payload as plain text for webhook request
 	 *
 	 * @example
 	 *     const payload = Webhook.buildPayload(message, data);
 	 */
-	static buildPayload(message: string | undefined, data: any): any {
-		return data || { text: message };
+	static buildPayload(message: string | undefined, data: any): string {
+		return message !== undefined ? message : JSON.stringify(data);
 	}
 
 	/**
@@ -31,11 +31,11 @@ export default class Webhook {
 	static buildConfig(): WebhookRequestConfig {
 		return {
 			headers: {
-				'Content-Type': 'application/json',
-				Authorization: config.webhook.apiKey
+				'Content-Type': 'text/plain',
+				Authorization: config.webhook.authorizationKey
 			},
 			params: {
-				apikey: config.webhook.apiKey
+				token: config.webhook.token
 			},
 			timeout: config.webhook.timeout,
 			validateStatus: (status: number) => status < 500
@@ -88,11 +88,21 @@ export default class Webhook {
 	 *     const response = Webhook.buildSuccessResponse(result, headers);
 	 */
 	static buildSuccessResponse(result: any, headers: any): ChatResponse {
+		let message: string;
+
+		if (typeof result === 'string') {
+			message = result;
+		} else if (result?.answers && Array.isArray(result.answers)) {
+			message = result.answers[0];
+		} else {
+			message = JSON.stringify(result);
+		}
+
 		return {
 			success: true,
-			result,
+			message,
+			timestamp: new Date().toISOString(),
 			metadata: {
-				timestamp: new Date().toISOString(),
 				processingTime: headers['x-response-time']
 			}
 		};

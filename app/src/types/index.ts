@@ -11,6 +11,8 @@ export interface Config {
 	webhook: {
 		baseUrl: string;
 		apiKey: string;
+		authorizationKey: string;
+		token: string;
 		timeout: number;
 	};
 	rateLimit: {
@@ -49,9 +51,9 @@ export interface ChatRequestBody {
 
 export interface ChatResponse {
 	success: boolean;
-	result: any;
+	message: string;
+	timestamp: string;
 	metadata?: {
-		timestamp: string;
 		processingTime?: string;
 	};
 }
@@ -68,6 +70,7 @@ export interface ErrorResponse {
 // ============================================================================
 
 export interface WebhookResponse {
+	answers?: string[];
 	data?: {
 		objects?: {
 			[key: string]: {
@@ -82,10 +85,10 @@ export interface WebhookResponse {
 export interface WebhookRequestConfig {
 	headers: {
 		'Content-Type': string;
-		Authorization: string;
+		Authorization?: string;
 	};
 	params: {
-		apikey: string;
+		token: string;
 	};
 	timeout: number;
 	validateStatus?: (status: number) => boolean;

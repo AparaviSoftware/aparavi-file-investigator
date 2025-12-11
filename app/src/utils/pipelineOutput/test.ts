@@ -4,6 +4,52 @@ import { WebhookResponse } from '@types';
 
 describe('PipelineOutput', () => {
 	describe('.extract', () => {
+		context('when response has answers array', () => {
+			it('should extract first element from answers array', () => {
+				const responseData: WebhookResponse = {
+					answers: ['First answer', 'Second answer', 'Third answer']
+				};
+
+				const result = PipelineOutput.extract(responseData);
+
+				expect(result).to.equal('First answer');
+			});
+
+			it('should prioritize answers array over data.objects', () => {
+				const responseData: WebhookResponse = {
+					answers: ['Answer from array'],
+					data: {
+						objects: {
+							'obj-123': {
+								text: 'Text from objects'
+							}
+						}
+					}
+				};
+
+				const result = PipelineOutput.extract(responseData);
+
+				expect(result).to.equal('Answer from array');
+			});
+
+			it('should handle empty answers array', () => {
+				const responseData: WebhookResponse = {
+					answers: [],
+					data: {
+						objects: {
+							'obj-123': {
+								text: 'Fallback text'
+							}
+						}
+					}
+				};
+
+				const result = PipelineOutput.extract(responseData);
+
+				expect(result).to.equal('Fallback text');
+			});
+		});
+
 		context('when response has expected structure with text field', () => {
 			it('should extract text from first object', () => {
 				const responseData: WebhookResponse = {

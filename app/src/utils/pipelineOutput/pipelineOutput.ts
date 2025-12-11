@@ -1,10 +1,13 @@
 import { WebhookResponse } from '@types';
+import { Logger } from '@utils';
 
 export default class PipelineOutput {
 	/**
 	 * Extracts pipeline output from webhook response based on the expected structure.
-	 * Returns the text field from the first object if available, otherwise returns the
-	 * entire first object or falls back to the full response data.
+	 * Priority order:
+	 * 1. First element from answers array if present
+	 * 2. Text field from the first object in data.objects
+	 * 3. Full response data as fallback
 	 *
 	 * @param {WebhookResponse} responseData - The webhook response object containing pipeline output
 	 *
@@ -14,6 +17,11 @@ export default class PipelineOutput {
 	 *     const output = PipelineOutput.extract(webhookResponse);
 	 */
 	static extract(responseData: WebhookResponse): any {
+		// Check for answers array first (highest priority)
+		if (responseData?.answers && Array.isArray(responseData.answers) && responseData.answers.length > 0) {
+			return responseData.answers[0];
+		}
+
 		// Check for expected structure: data.objects.{id}.text
 		if (!responseData?.data?.objects) {
 			return responseData;

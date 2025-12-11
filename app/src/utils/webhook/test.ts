@@ -20,32 +20,13 @@ describe('Webhook', () => {
 	});
 
 	describe('.buildPayload', () => {
-		context('when data is provided', () => {
-			it('should return data object', () => {
-				const data = { key: 'value', nested: { prop: 'test' } };
-
-				const result = Webhook.buildPayload(undefined, data);
-
-				expect(result).to.deep.equal(data);
-			});
-
-			it('should prefer data over message', () => {
-				const message = 'test message';
-				const data = { key: 'value' };
-
-				const result = Webhook.buildPayload(message, data);
-
-				expect(result).to.deep.equal(data);
-			});
-		});
-
-		context('when only message is provided', () => {
-			it('should return object with text property', () => {
+		context('when message is provided', () => {
+			it('should return message as plain text', () => {
 				const message = 'test message';
 
 				const result = Webhook.buildPayload(message, null);
 
-				expect(result).to.deep.equal({ text: message });
+				expect(result).to.equal(message);
 			});
 
 			it('should handle empty string message', () => {
@@ -53,15 +34,34 @@ describe('Webhook', () => {
 
 				const result = Webhook.buildPayload(message, null);
 
-				expect(result).to.deep.equal({ text: '' });
+				expect(result).to.equal('');
+			});
+		});
+
+		context('when data is provided', () => {
+			it('should return stringified data when no message', () => {
+				const data = { key: 'value', nested: { prop: 'test' } };
+
+				const result = Webhook.buildPayload(undefined, data);
+
+				expect(result).to.equal(JSON.stringify(data));
+			});
+
+			it('should prefer message over data', () => {
+				const message = 'test message';
+				const data = { key: 'value' };
+
+				const result = Webhook.buildPayload(message, data);
+
+				expect(result).to.equal(message);
 			});
 		});
 
 		context('when neither message nor data is provided', () => {
-			it('should return object with undefined text', () => {
+			it('should return stringified null', () => {
 				const result = Webhook.buildPayload(undefined, null);
 
-				expect(result).to.deep.equal({ text: undefined });
+				expect(result).to.equal('null');
 			});
 		});
 	});
@@ -79,14 +79,14 @@ describe('Webhook', () => {
 		it('should include correct headers', () => {
 			const config = Webhook.buildConfig();
 
-			expect(config.headers).to.have.property('Content-Type', 'application/json');
+			expect(config.headers).to.have.property('Content-Type', 'text/plain');
 			expect(config.headers).to.have.property('Authorization');
 		});
 
-		it('should include apikey in params', () => {
+		it('should include token in params', () => {
 			const config = Webhook.buildConfig();
 
-			expect(config.params).to.have.property('apikey');
+			expect(config.params).to.have.property('token');
 		});
 
 		it('should have validateStatus function', () => {
@@ -199,19 +199,20 @@ describe('Webhook', () => {
 			const response = Webhook.buildSuccessResponse(result, headers);
 
 			expect(response).to.have.property('success', true);
-			expect(response).to.have.property('result', result);
+			expect(response).to.have.property('message');
+			expect(response).to.have.property('timestamp');
 			expect(response).to.have.property('metadata');
 		});
 
-		it('should include timestamp in metadata', () => {
+		it('should include timestamp at top level', () => {
 			const result = { data: 'test' };
 			const headers = { 'x-response-time': '100ms' };
 
 			const response = Webhook.buildSuccessResponse(result, headers);
 
-			expect(response.metadata).to.have.property('timestamp');
-			expect(response.metadata.timestamp).to.be.a('string');
-			expect(new Date(response.metadata.timestamp).toISOString()).to.equal(response.metadata.timestamp);
+			expect(response).to.have.property('timestamp');
+			expect(response.timestamp).to.be.a('string');
+			expect(new Date(response.timestamp).toISOString()).to.equal(response.timestamp);
 		});
 
 		it('should include processingTime from headers', () => {
@@ -229,7 +230,25 @@ describe('Webhook', () => {
 
 			const response = Webhook.buildSuccessResponse(result, headers);
 
-			expect(response.metadata.processingTime).to.be.undefined;
+			expect(response.metadata?.processingTime).to.be.undefined;
+		});
+
+		it('should convert string result to message', () => {
+			const result = 'This is a test message';
+			const headers = {};
+
+			const response = Webhook.buildSuccessResponse(result, headers);
+
+			expect(response.message).to.equal('This is a test message');
+		});
+
+		it('should stringify object result to message', () => {
+			const result = { data: 'test', nested: { value: 123 } };
+			const headers = {};
+
+			const response = Webhook.buildSuccessResponse(result, headers);
+
+			expect(response.message).to.equal(JSON.stringify(result));
 		});
 	});
 });
