@@ -2,6 +2,13 @@
 	"name": "aparavi-file-investigator",
 	"version": "1.0.0",
 	"description": "An LLM powered chat assistant to investigate large complex datasets.",
+	"contributors": [
+		{
+			"name": "Joshua D. Phillips",
+			"email": "josh.phillips@aparavi.com",
+			"url": "https://github.com/joshuadarron"
+		}
+	],
 	"private": true,
 	"scripts": {
 		"start": "pnpm build && concurrently -n \"backend,frontend\" -c \"blue,green\" \"pnpm --filter ./app start\" \"pnpm --filter ./client preview\"",

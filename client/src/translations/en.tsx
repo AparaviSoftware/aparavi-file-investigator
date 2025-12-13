@@ -36,6 +36,6 @@ export const t = {
 		)
 	},
 	footer: {
-		disclaimer: 'AI can make mistake. Just like every weirdo who visited the island.'
+		disclaimer: 'AI can make mistakes. Just like every weirdo who visited the island.'
 	}
 };
