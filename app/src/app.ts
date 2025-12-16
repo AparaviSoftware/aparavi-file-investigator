@@ -45,6 +45,16 @@ app.use(cors({
 			return callback(null, true);
 		}
 
+		// In production, allow localhost on any port (for local preview builds)
+		// but only if the configured frontend URL is also localhost
+		const frontendIsLocalhost = config.frontend.url.includes('localhost') ||
+			config.frontend.url.includes('127.0.0.1');
+		if (config.nodeEnv === 'production' &&
+			frontendIsLocalhost &&
+			(origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+			return callback(null, true);
+		}
+
 		callback(new Error('Not allowed by CORS'));
 	},
 	credentials: true,

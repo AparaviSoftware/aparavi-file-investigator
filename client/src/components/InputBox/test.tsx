@@ -4,9 +4,9 @@ import { renderWithProviders } from '../../test/testUtils';
 import InputBox from './index';
 
 describe('InputBox', () => {
-	let mockOnQueryChange: ReturnType<typeof vi.fn>;
-	let mockOnSubmit: ReturnType<typeof vi.fn>;
-	let mockOnClear: ReturnType<typeof vi.fn>;
+	let mockOnQueryChange: (query: string) => void;
+	let mockOnSubmit: (query: string) => void;
+	let mockOnClear: () => void;
 
 	beforeEach(() => {
 		mockOnQueryChange = vi.fn();

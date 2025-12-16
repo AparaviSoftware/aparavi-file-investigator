@@ -70,7 +70,7 @@ describe('Header', () => {
 		});
 
 		it('should have create button with orange background', () => {
-			const { container } = renderWithProviders(<Header />);
+			renderWithProviders(<Header />);
 
 			const createButton = screen.getByText('Create your own chatbot').closest('a');
 			expect(createButton).toHaveClass('bg-orange-400');

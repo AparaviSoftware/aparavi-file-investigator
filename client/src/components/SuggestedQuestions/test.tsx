@@ -10,7 +10,7 @@ describe('SuggestedQuestions', () => {
 		'Question 2 about topic B?',
 		'Question 3 about topic C?'
 	];
-	let mockOnQuestionClick: ReturnType<typeof vi.fn>;
+	let mockOnQuestionClick: (question: string) => void;
 
 	beforeEach(() => {
 		mockOnQuestionClick = vi.fn();

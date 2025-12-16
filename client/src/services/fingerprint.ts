@@ -125,9 +125,9 @@ export function generateFingerprint(): FingerprintData {
 		!!window.sessionStorage,
 		!!window.localStorage,
 		!!window.indexedDB,
-		typeof(document.body.addBehavior),
-		typeof(window.openDatabase),
-		nav.cpuClass,
+		typeof((document.body as any).addBehavior),
+		typeof((window as any).openDatabase),
+		(nav as any).cpuClass,
 		nav.platform,
 		nav.hardwareConcurrency
 	];

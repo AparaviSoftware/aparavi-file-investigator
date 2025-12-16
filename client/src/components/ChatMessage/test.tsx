@@ -5,8 +5,8 @@ import ChatMessage from './index';
 
 describe('ChatMessage', () => {
 	const mockMessage = 'Hello, this is a test message';
-	let mockOnRegenerate: ReturnType<typeof vi.fn>;
-	let mockOnEdit: ReturnType<typeof vi.fn>;
+	let mockOnRegenerate: () => void;
+	let mockOnEdit: (newMessage: string) => void;
 
 	beforeEach(() => {
 		mockOnRegenerate = vi.fn();
