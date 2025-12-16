@@ -70,16 +70,22 @@ pnpm test
 ```
 pipeline-chat-backend/
 ├── src/
-│   ├── server.ts              # Main application
-│   ├── config/
-│   │   └── index.ts          # Configuration
-│   ├── middleware/
-│   │   └── errorHandler.ts   # Error handling
-│   ├── types/
-│   │   ├── index.ts          # Type definitions
-│   │   └── express.d.ts      # Express extensions
-│   └── utils/
-│       └── extractOutput.ts  # Helper functions
+│   ├── app.ts                 # Express application setup
+│   ├── bin/
+│   │   └── www.ts            # HTTP server startup
+│   └── api/
+│       ├── components/       # Feature components
+│       ├── config/
+│       │   └── index.ts      # Configuration
+│       ├── middleware/
+│       │   └── error.ts      # Error handling
+│       ├── router/
+│       │   └── router.ts     # Route discovery
+│       ├── types/
+│       │   ├── index.ts      # Type definitions
+│       │   └── express.d.ts  # Express extensions
+│       ├── translations/     # i18n translations
+│       └── utils/            # Helper functions
 ├── dist/                      # Compiled output (generated)
 ├── .npmrc                     # pnpm configuration
 ├── package.json
@@ -137,7 +143,7 @@ docker-compose up -d
 ```bash
 pnpm add -g pm2
 pnpm build
-pm2 start dist/server.js --name pipeline-backend
+pm2 start dist/bin/www.js --name pipeline-backend
 pm2 save
 ```
 

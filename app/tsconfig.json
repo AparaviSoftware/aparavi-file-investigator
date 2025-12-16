@@ -24,20 +24,20 @@
       "baseUrl": ".",
       "paths": {
         "@/*": ["src/*"],
-        "@config": ["src/config/index"],
-        "@config/*": ["src/config/*"],
-        "@utils": ["src/utils/index"],
-        "@utils/*": ["src/utils/*"],
-        "@middleware/*": ["src/middleware/*"],
-        "@types": ["src/types/index"],
-        "@types/*": ["src/types/*"],
-        "@components/*": ["src/components/*"],
-        "@translations/*": ["src/translations/*"],
-        "@router/*": ["src/router/*"]
+        "@config": ["src/api/config/index"],
+        "@config/*": ["src/api/config/*"],
+        "@utils": ["src/api/utils/index"],
+        "@utils/*": ["src/api/utils/*"],
+        "@middleware/*": ["src/api/middleware/*"],
+        "@types": ["src/api/types/index"],
+        "@types/*": ["src/api/types/*"],
+        "@components/*": ["src/api/components/*"],
+        "@translations/*": ["src/api/translations/*"],
+        "@router/*": ["src/api/router/*"]
       }
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"],
+    "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/test.ts"],
     "ts-node": {
       "compilerOptions": {
         "module": "commonjs"

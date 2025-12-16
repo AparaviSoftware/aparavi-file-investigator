@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: __dirname + '/../.env' });
+
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -7,6 +10,7 @@ import { errorHandler, notFoundHandler } from '@middleware/error';
 import { fingerprintMiddleware } from '@middleware/fingerprint';
 // Components
 import routes from '@router/router';
+
 // Validate configuration on startup
 try {
 	config.validate();
@@ -120,59 +124,5 @@ app.use(notFoundHandler);
 // Global error handler
 app.use(errorHandler);
 
-// ============================================================================
-// SERVER STARTUP
-// ============================================================================
-
-const server = app.listen(config.port, () => {
-	const moment = require('moment');
-	const os = require('os');
-	const tsVersion = require('typescript').version;
-	console.log(`
-  ****************************************
-  *
-  *   Aparavi - File Investigator Backend (TypeScript)
-  *   Copyright (c) ${moment().year()} Aparavi
-  *
-  *       Environment:   ${config.nodeEnv}
-  *       PORT:          ${config.port}
-  *       URL:           http://localhost:${config.port}
-  *       Webhook:       ${config.webhook.baseUrl}
-  *       Frontend:      ${config.frontend.url}
-  *
-  *       Time:          ${moment().format('YY/MM/DD, hh:mm:ss A')}
-  *       Node.js:       ${process.version}
-  *       TypeScript:    ${tsVersion}
-  *       Memory:        ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB
-  *       CPU Usage:     ${os.loadavg()[0].toFixed(2)}%
-  *       Uptime:        ${process.uptime().toFixed(2)} seconds
-  *       OS:            ${os.type()} ${os.release()}
-  *       CPUs:          ${os.cpus().length}
-  *
-  ****************************************
-  
-  Available Endpoints:
-	  POST /api/chat        - Text/JSON chat
-  
-  Press Ctrl+C to stop`);
-});
-
-// Graceful shutdown
-const shutdown = (): void => {
-	console.log('\nShutting down gracefully...');
-	server.close(() => {
-		console.log('Server closed');
-		process.exit(0);
-	});
-
-	// Force shutdown after 10 seconds
-	setTimeout(() => {
-		console.error('Forced shutdown');
-		process.exit(1);
-	}, 10000);
-};
-
-process.on('SIGTERM', shutdown);
-process.on('SIGINT', shutdown);
-
+/** Expose our app */
 export default app;

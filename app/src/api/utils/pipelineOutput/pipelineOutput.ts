@@ -1,5 +1,4 @@
 import { WebhookResponse } from '@types';
-import { Logger } from '@utils';
 
 export default class PipelineOutput {
 	/**
