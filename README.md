@@ -1,4 +1,4 @@
-# Aparavi Pipeline Chat Application
+# Aparavi - File Investigator
 
 A full-stack chat interface for interacting with Aparavi data pipelines. This monorepo contains a React frontend and choice of Express or Lambda backend.
 
