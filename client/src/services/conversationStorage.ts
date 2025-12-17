@@ -28,7 +28,7 @@ export interface ConversationState {
 }
 
 const STORAGE_KEY = 'aparavi_conversation';
-const DEFAULT_QUERY_LIMIT = 10;
+const DEFAULT_QUERY_LIMIT = 25;
 
 /**
  * Generates a unique message ID.
