@@ -1,135 +1,186 @@
 # Aparavi Chat Lambda Function
 
-AWS Lambda function that provides the same chat functionality as the Express server endpoint. Send a query and receive a processed response from the Aparavi webhook pipeline.
-
-## Overview
-
-This Lambda function replicates the `/api/chat` endpoint functionality from the Express backend. It accepts a message or data payload, forwards it to the configured Aparavi webhook, and returns the processed response.
+AWS Lambda function providing serverless chat functionality for Aparavi data pipelines. Alternative to the Express backend for serverless deployments.
 
 ## Features
 
-- **Webhook Integration**: Forwards requests to Aparavi data pipeline webhooks
-- **Error Handling**: Comprehensive error handling with detailed logging
+- **Serverless**: AWS Lambda-based deployment
+- **Webhook Integration**: Forwards requests to Aparavi pipeline webhooks
+- **Error Handling**: Comprehensive error handling with CloudWatch logging
 - **Response Processing**: Extracts and formats pipeline output
-- **TypeScript**: Fully typed for development safety
-- **AWS Lambda**: Serverless deployment ready
+- **TypeScript**: Full type safety
+- **Lambda-ready**: Packaged and optimized for AWS deployment
 
-## Requirements
+## Prerequisites
 
-- Node.js >= 18.0.0
-- AWS Lambda runtime compatible with Node.js 18.x or higher
-- Valid Aparavi webhook credentials
+- **Node.js** >= 18.0.0 ([Download](https://nodejs.org/))
+- **pnpm** >= 8.0.0 ([Install guide](https://pnpm.io/installation))
+- **AWS Account** ([Sign up](https://aws.amazon.com/))
+- **AWS CLI** (optional, for CLI deployment) ([Install guide](https://aws.amazon.com/cli/))
 
-## Environment Variables
+## Development Setup
 
-The Lambda function requires the following environment variables to be configured:
-
-```env
-WEBHOOK_BASE_URL=<your-webhook-url>
-WEBHOOK_AUTHORIZATION_KEY=<your-authorization-key>
-WEBHOOK_TOKEN=<your-webhook-token>
-```
-
-These should be configured in the Lambda function's environment settings in AWS.
-
-## Installation
+### 1. Install Dependencies
 
 ```bash
-npm install
-# or
+cd lambda
 pnpm install
 ```
 
-## Building
+### 2. Configure Environment Variables
 
-```bash
-npm run build
-# or
-pnpm build
+The Lambda function requires these environment variables (configured in AWS Lambda console):
+
+```env
+WEBHOOK_BASE_URL=https://your-webhook-url.com
+WEBHOOK_AUTHORIZATION_KEY=your_authorization_key
+WEBHOOK_TOKEN=your_token
 ```
 
-This compiles TypeScript to JavaScript in the `dist/` directory.
+For local testing, create a `.env` file:
+```bash
+cp .env.example .env
+# Edit .env with your credentials
+```
 
-## Packaging for Lambda
+### 3. Build and Package
 
 ```bash
-npm run package
-# or
+# Build TypeScript
+pnpm build
+
+# Package for Lambda deployment
 pnpm package
 ```
 
-This builds the project and creates a `function.zip` file ready for Lambda deployment.
+This creates `function.zip` ready for upload to AWS Lambda.
 
-**Note:** The package script uses cross-platform tools (`bestzip` and `rimraf`) that work on both Windows and Unix systems.
+### Development Commands
+
+```bash
+# Type checking
+pnpm type-check
+
+# Linting
+pnpm lint
+
+# Clean build artifacts
+pnpm clean
+```
 
 ## Deployment
 
-### Using AWS Console
+### Option 1: AWS Console (Recommended for First Deployment)
 
-1. Build and package the function:
+1. **Build and package:**
    ```bash
-   npm run package
-   # or
    pnpm package
    ```
 
-2. Upload `function.zip` to AWS Lambda console
+2. **Create Lambda function:**
+   - Go to [AWS Lambda Console](https://console.aws.amazon.com/lambda)
+   - Click "Create function"
+   - Choose "Author from scratch"
+   - Function name: `aparavi-chat-lambda`
+   - Runtime: Node.js 18.x or higher
+   - Click "Create function"
 
-3. Configure environment variables in Lambda settings
+3. **Upload code:**
+   - In the "Code" tab, click "Upload from" → ".zip file"
+   - Upload `function.zip`
+   - Click "Save"
 
-4. Set handler to: `handler.handler`
+4. **Configure handler:**
+   - In "Runtime settings", set Handler to: `handler.handler`
 
-5. Configure appropriate timeout (recommended: 5 minutes to match webhook timeout)
+5. **Set environment variables:**
+   - Go to "Configuration" → "Environment variables"
+   - Add:
+     - `WEBHOOK_BASE_URL`
+     - `WEBHOOK_AUTHORIZATION_KEY`
+     - `WEBHOOK_TOKEN`
 
-6. **Set up HTTP access** (choose one):
+6. **Adjust timeout:**
+   - Go to "Configuration" → "General configuration"
+   - Set timeout to **5 minutes (300 seconds)** to match webhook timeout
 
-   **Option A: Lambda Function URL** (Recommended - Simpler)
-   - In Lambda console, go to Configuration → Function URL
+7. **Set up HTTP access** (choose one):
+
+   **Option A: Lambda Function URL** (Simpler)
+   - Go to "Configuration" → "Function URL"
    - Click "Create function URL"
-   - Auth type: `NONE` (or `AWS_IAM` if you need authentication)
+   - Auth type: `NONE` (or `AWS_IAM` for authentication)
    - Configure CORS:
-     - Allow origin: `*` or your specific frontend domain
+     - Allow origin: `*` or your frontend domain
      - Allow methods: `POST`
      - Allow headers: `Content-Type`
-   - Save and copy the Function URL (e.g., `https://abcd1234.lambda-url.us-east-1.on.aws`)
+   - Save and copy the Function URL
 
    **Option B: API Gateway** (More features)
-   - Create a new REST API in API Gateway
-   - Create a POST method at the root resource (`/`)
-   - Integration type: Lambda Function (Lambda Proxy Integration)
+   - Create a new REST API in [API Gateway Console](https://console.aws.amazon.com/apigateway)
+   - Create a `POST` method at root (`/`)
+   - Integration: Lambda Function (enable Lambda Proxy Integration)
    - Select your Lambda function
    - Enable CORS
    - Deploy to a stage (e.g., `prod`)
-   - Copy the invoke URL (e.g., `https://api-id.execute-api.us-east-1.amazonaws.com/prod`)
-   - **Note**: Use the base stage URL directly - do not append `/api/chat`
+   - Copy the invoke URL
 
-7. Use the Function URL or API Gateway endpoint in your frontend configuration
+8. **Update frontend configuration:**
 
-### Using AWS CLI
+   In `client/.env`:
+   ```env
+   VITE_BACKEND_TYPE=lambda
+   VITE_LAMBDA_URL=https://your-function-url.lambda-url.us-east-1.on.aws
+   ```
+
+### Option 2: AWS CLI
 
 ```bash
 # Build and package
-npm run package
-# or: pnpm package
+pnpm package
 
-# Create or update Lambda function
+# Create Lambda function
+aws lambda create-function \
+  --function-name aparavi-chat-lambda \
+  --runtime nodejs18.x \
+  --handler handler.handler \
+  --zip-file fileb://function.zip \
+  --role arn:aws:iam::ACCOUNT_ID:role/lambda-execution-role \
+  --timeout 300 \
+  --environment Variables="{WEBHOOK_BASE_URL=https://...,WEBHOOK_AUTHORIZATION_KEY=...,WEBHOOK_TOKEN=...}"
+
+# Update existing function
 aws lambda update-function-code \
   --function-name aparavi-chat-lambda \
   --zip-file fileb://function.zip
 ```
 
+### Option 3: Serverless Framework / SAM
+
+For infrastructure-as-code deployment, consider using:
+- [AWS SAM](https://aws.amazon.com/serverless/sam/)
+- [Serverless Framework](https://www.serverless.com/)
+- [Terraform](https://www.terraform.io/)
+
 ## Usage
 
-### Direct Invocation
+### Request Format
 
+**Direct Lambda invocation:**
 ```json
 {
   "message": "What files were modified today?"
 }
 ```
 
-Or with data:
+**Via API Gateway:**
+```json
+{
+  "body": "{\"message\":\"What files were modified today?\"}"
+}
+```
 
+**With custom data:**
 ```json
 {
   "data": {
@@ -139,20 +190,9 @@ Or with data:
 }
 ```
 
-### API Gateway Integration
+### Response Format
 
-When integrated with API Gateway, the function expects the request body in the `event.body` field (as a JSON string):
-
-```json
-{
-  "body": "{\"message\":\"What files were modified today?\"}"
-}
-```
-
-## Response Format
-
-### Success Response
-
+**Success:**
 ```json
 {
   "success": true,
@@ -164,8 +204,7 @@ When integrated with API Gateway, the function expects the request body in the `
 }
 ```
 
-### Error Response
-
+**Error:**
 ```json
 {
   "error": true,
@@ -185,73 +224,123 @@ lambda/
 │   │   └── index.ts          # TypeScript type definitions
 │   ├── utils/
 │   │   ├── callout/          # Promise wrapper utility
-│   │   ├── logger/           # Logging utility
-│   │   ├── pipelineOutput/   # Response extraction utility
-│   │   ├── webhook/          # Webhook integration utility
-│   │   └── index.ts          # Utils barrel export
+│   │   ├── logger/           # CloudWatch logging
+│   │   ├── pipelineOutput/   # Response extraction
+│   │   └── webhook/          # Webhook integration
 │   └── handler.ts            # Main Lambda handler
+├── dist/                      # Compiled output (generated)
+├── function.zip               # Deployment package (generated)
 ├── package.json
 ├── tsconfig.json
 ├── .env.example
-├── .gitignore
 └── README.md
 ```
 
-## Development
+## Logging
 
-### Type Checking
+All operations are logged to CloudWatch Logs:
+- Info: Request processing, configuration validation
+- Error: Webhook errors, parsing failures, exceptions
 
-```bash
-npm run type-check
-# or
-pnpm type-check
-```
-
-### Linting
-
-```bash
-npm run lint
-# or
-pnpm lint
-```
-
-### Clean Build
-
-```bash
-npm run clean
-npm run build
-# or
-pnpm clean
-pnpm build
-```
+View logs in:
+- AWS Lambda Console → Monitor → "View logs in CloudWatch"
+- CloudWatch Console → Log groups → `/aws/lambda/aparavi-chat-lambda`
 
 ## Error Handling
 
-The Lambda function follows the same error handling patterns as the Express backend:
+The Lambda follows these error patterns:
 
-- Uses the `Callout` utility to wrap promises
-- All errors are logged with context
-- Appropriate HTTP status codes are returned
-- Timeout errors (504) for webhook timeouts
-- Validation errors (400) for malformed requests
-- Server errors (500) for unexpected failures
+- **Callout utility**: Wraps all promises as `[error, data]`
+- **Validation errors**: Return 400 status
+- **Webhook timeouts**: Return 504 status
+- **Server errors**: Return 500 status
+- **All errors logged** with full context to CloudWatch
 
-## Logging
+## Configuration
 
-All operations are logged using the `Logger` utility:
+### Timeout Settings
 
-- Info: Request processing, configuration validation
-- Error: Webhook errors, parsing failures, unhandled exceptions
+The webhook has a 5-minute timeout. Ensure your Lambda timeout is set to at least **5 minutes (300 seconds)**.
 
-Logs are available in CloudWatch Logs for the Lambda function.
+### Memory Settings
 
-## Configuration Validation
+Recommended: 512 MB (adjust based on actual usage in CloudWatch metrics)
 
-On cold start, the Lambda validates that all required environment variables are present. Missing configuration will cause the function to fail immediately with a clear error message.
+### Cold Start Optimization
 
-## Timeout Settings
+- Keep dependencies minimal
+- Use Lambda provisioned concurrency for critical workloads
+- Monitor cold start metrics in CloudWatch
 
-The webhook has a 5-minute timeout. Ensure your Lambda function timeout is set to at least 5 minutes (300 seconds) to accommodate long-running pipeline operations.
+## Monitoring
+
+Monitor Lambda performance:
+- **CloudWatch Metrics**: Duration, errors, throttles, concurrent executions
+- **CloudWatch Logs**: All application logs
+- **X-Ray**: Enable for detailed tracing (optional)
+
+## Cost Optimization
+
+Lambda pricing is based on:
+- Number of requests
+- Duration of execution
+- Memory allocation
+
+Typical costs for moderate usage: < $10/month
+
+Monitor costs in AWS Cost Explorer.
+
+## Troubleshooting
+
+### Missing Environment Variables
+
+**Error**: "Missing required configuration"
+
+**Solution**: Add all required environment variables in Lambda Configuration → Environment variables
+
+### Timeout Errors
+
+**Error**: Task timed out after 3.00 seconds
+
+**Solution**: Increase Lambda timeout to 300 seconds (5 minutes)
+
+### CORS Errors
+
+**Error**: CORS policy blocking requests from frontend
+
+**Solution**:
+- For Function URL: Configure CORS in Function URL settings
+- For API Gateway: Enable CORS in API Gateway console
+
+### Deployment Package Too Large
+
+**Error**: Unzipped size must be smaller than...
+
+**Solution**:
+- Run `pnpm clean && pnpm package`
+- Remove unnecessary dependencies
+- Consider using Lambda Layers for large dependencies
+
+## Switching from Express to Lambda
+
+1. Deploy Lambda function (follow deployment steps above)
+2. Update `client/.env`:
+   ```env
+   VITE_BACKEND_TYPE=lambda
+   VITE_LAMBDA_URL=https://your-function-url.lambda-url.us-east-1.on.aws
+   ```
+3. Rebuild and redeploy frontend: `pnpm build`
+4. Decommission Express server if no longer needed
+
+## Switching from Lambda to Express
+
+1. Start Express backend (see [app/README.md](../app/README.md))
+2. Update `client/.env`:
+   ```env
+   VITE_BACKEND_TYPE=express
+   VITE_API_URL=http://localhost:3001
+   ```
+3. Rebuild frontend: `pnpm build`
 
 ## License
 
