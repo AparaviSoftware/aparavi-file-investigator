@@ -81,6 +81,30 @@ This builds the project and creates a `function.zip` file ready for Lambda deplo
 
 5. Configure appropriate timeout (recommended: 5 minutes to match webhook timeout)
 
+6. **Set up HTTP access** (choose one):
+
+   **Option A: Lambda Function URL** (Recommended - Simpler)
+   - In Lambda console, go to Configuration → Function URL
+   - Click "Create function URL"
+   - Auth type: `NONE` (or `AWS_IAM` if you need authentication)
+   - Configure CORS:
+     - Allow origin: `*` or your specific frontend domain
+     - Allow methods: `POST`
+     - Allow headers: `Content-Type`
+   - Save and copy the Function URL (e.g., `https://abcd1234.lambda-url.us-east-1.on.aws`)
+
+   **Option B: API Gateway** (More features)
+   - Create a new REST API in API Gateway
+   - Create a POST method at the root resource (`/`)
+   - Integration type: Lambda Function (Lambda Proxy Integration)
+   - Select your Lambda function
+   - Enable CORS
+   - Deploy to a stage (e.g., `prod`)
+   - Copy the invoke URL (e.g., `https://api-id.execute-api.us-east-1.amazonaws.com/prod`)
+   - **Note**: Use the base stage URL directly - do not append `/api/chat`
+
+7. Use the Function URL or API Gateway endpoint in your frontend configuration
+
 ### Using AWS CLI
 
 ```bash

@@ -23,6 +23,19 @@ import {
  */
 export async function handler(event: LambdaEvent): Promise<LambdaResponse> {
 	try {
+		// Handle CORS preflight requests
+		if (event.httpMethod === 'OPTIONS') {
+			return {
+				statusCode: 200,
+				headers: {
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': 'POST, OPTIONS',
+					'Access-Control-Allow-Headers': 'Content-Type'
+				},
+				body: ''
+			};
+		}
+
 		// Validate configuration on cold start
 		config.validate();
 
@@ -119,7 +132,10 @@ function buildSuccessResponse(data: ChatResponse): LambdaResponse {
 	return {
 		statusCode: 200,
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type'
 		},
 		body: JSON.stringify(data)
 	};
@@ -147,7 +163,10 @@ function buildErrorResponse(message: string, statusCode: number = 500, details?:
 	return {
 		statusCode,
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type'
 		},
 		body: JSON.stringify(errorResponse)
 	};

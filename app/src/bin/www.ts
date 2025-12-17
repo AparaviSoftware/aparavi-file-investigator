@@ -82,6 +82,45 @@ function onError(error: IErrNoException): void {
 
 /** IIFE starting the server */
 (async function () {
+	const backendType = process.env.BACKEND_TYPE || 'express';
+
+	if (backendType === 'lambda') {
+		console.log(`
+****************************************
+*
+*   Aparavi - File Investigator Backend (TypeScript)
+*   Copyright (c) ${moment().year()} Aparavi
+*
+*       Environment:   ${config.nodeEnv}
+*       Backend Type:  Lambda
+*
+*       Express server is NOT started.
+*       The application is configured to use AWS Lambda.
+*
+*       Time:          ${moment().format('YY/MM/DD, hh:mm:ss A')}
+*       Node.js:       ${process.version}
+*       TypeScript:    ${tsVersion}
+*
+****************************************
+
+The Express backend is disabled.
+Frontend should be configured to invoke Lambda directly.
+Press Ctrl+C to exit.
+`);
+
+		// Keep the process running
+		process.on('SIGTERM', () => {
+			console.log('\nExiting...');
+			process.exit(0);
+		});
+		process.on('SIGINT', () => {
+			console.log('\nExiting...');
+			process.exit(0);
+		});
+
+		return;
+	}
+
 	/**
 	 * Create HTTP server.
 	 */
@@ -100,6 +139,7 @@ function onError(error: IErrNoException): void {
 *   Copyright (c) ${moment().year()} Aparavi
 *
 *       Environment:   ${config.nodeEnv}
+*       Backend Type:  Express
 *       PORT:          ${config.port}
 *       URL:           http://localhost:${config.port}
 *       Webhook:       ${config.webhook.baseUrl}

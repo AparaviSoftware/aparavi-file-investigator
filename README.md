@@ -29,10 +29,27 @@ The backend acts as a secure proxy between the frontend and the Aparavi webhook,
 
 ### System Flow
 
+The application supports two backend architectures:
+
+#### Express Backend (Traditional)
 ```
 ┌─────────────┐         ┌──────────────┐         ┌──────────────┐
 │   Browser   │────────▶│   Frontend   │────────▶│    Backend   │
 │  (Port 3000)│         │  (React/Vite)│         │  (Express)   │
+└─────────────┘         └──────────────┘         └──────────────┘
+                                                          │
+                                                          ▼
+                                                  ┌──────────────┐
+                                                  │ Aparavi      │
+                                                  │ Webhook API  │
+                                                  └──────────────┘
+```
+
+#### Lambda Backend (Serverless)
+```
+┌─────────────┐         ┌──────────────┐         ┌──────────────┐
+│   Browser   │────────▶│   Frontend   │────────▶│  AWS Lambda  │
+│  (Port 3000)│         │  (React/Vite)│         │   Function   │
 └─────────────┘         └──────────────┘         └──────────────┘
                                                           │
                                                           ▼
@@ -130,6 +147,18 @@ aparavi-file-investigator/
 │   ├── Dockerfile
 │   └── docker-compose.yml
 │
+├── lambda/         # AWS Lambda function (alternative to Express)
+│   ├── src/
+│   │   ├── handler.ts         # Main Lambda handler
+│   │   ├── config/            # Configuration management
+│   │   ├── types/             # Type definitions
+│   │   └── utils/             # Utility functions
+│   ├── dist/                  # Compiled JavaScript (generated)
+│   ├── function.zip           # Lambda deployment package (generated)
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── README.md              # Lambda-specific documentation
+│
 ├── package.json               # Root package.json (monorepo orchestration)
 ├── pnpm-workspace.yaml        # pnpm workspace configuration
 └── README.md                  # This file
@@ -201,19 +230,32 @@ VITE_API_URL=http://localhost:3001           # Backend API URL
 
 ### 3. Start Development Servers
 
-From the root directory:
-
+**Option 1: Start Both (Express Backend)**
 ```bash
 pnpm dev
 ```
 
-This will start both services simultaneously:
+This starts both services simultaneously:
 - **Backend**: `http://localhost:3001` (with hot reload via ts-node-dev)
 - **Frontend**: `http://localhost:3000` (with Vite HMR)
 
 The output will be color-coded:
 - 🔵 **Blue** = Backend logs
 - 🟢 **Green** = Frontend logs
+
+**Option 2: Start Frontend Only (Lambda Backend)**
+```bash
+pnpm dev:client
+```
+
+This starts only the frontend on `http://localhost:3000` when using Lambda.
+
+**Option 3: Start Backend Only**
+```bash
+pnpm dev:app
+```
+
+This starts only the backend on `http://localhost:3001` for testing.
 
 ### 4. Start Production Build
 
@@ -239,6 +281,93 @@ This will:
 | `FRONTEND_URL` | No | `http://localhost:3000` | Frontend origin for CORS |
 | `RATE_LIMIT_WINDOW_MS` | No | `900000` | Rate limit time window (15 min) |
 | `RATE_LIMIT_MAX_REQUESTS` | No | `100` | Max requests per window |
+
+## 🔀 Backend Type Configuration
+
+The application supports two backend architectures:
+1. **Express** - Traditional Node.js/Express server (default)
+2. **Lambda** - Serverless AWS Lambda function
+
+### Choosing Your Backend
+
+#### Option 1: Express Backend (Default)
+
+**When to use:**
+- Local development
+- Self-hosted deployments
+- Traditional server infrastructure
+
+**Configuration:**
+
+Backend (`app/.env`):
+```env
+BACKEND_TYPE=express
+```
+
+Frontend (`client/.env`):
+```env
+VITE_BACKEND_TYPE=express
+VITE_API_URL=http://localhost:3001
+```
+
+**Starting the servers:**
+```bash
+pnpm dev
+```
+
+This starts both the Express backend (port 3001) and frontend (port 3000).
+
+#### Option 2: AWS Lambda Backend
+
+**When to use:**
+- Serverless deployments
+- AWS infrastructure
+- Cost-optimized scaling
+
+**Prerequisites:**
+- Deploy the Lambda function (see `lambda/README.md`)
+- Set up Lambda Function URL or API Gateway endpoint
+
+**Configuration:**
+
+Backend (`app/.env`):
+```env
+BACKEND_TYPE=lambda
+```
+
+Frontend (`client/.env`):
+```env
+VITE_BACKEND_TYPE=lambda
+VITE_LAMBDA_URL=https://your-function-url.lambda-url.us-east-1.on.aws
+```
+
+**Lambda Deployment:**
+
+1. Build and deploy the Lambda function:
+   ```bash
+   cd lambda
+   pnpm package
+   # Upload function.zip to AWS Lambda
+   ```
+
+2. Create a **Lambda Function URL** or **API Gateway** endpoint:
+   - **Function URL** (simpler): Enable Function URL in Lambda console
+   - **API Gateway** (more features): Create REST API with Lambda integration
+
+3. Set the function URL in `client/.env`:
+   ```env
+   VITE_LAMBDA_URL=https://abcd1234.lambda-url.us-east-1.on.aws
+   ```
+
+**Starting with Lambda backend:**
+```bash
+# Only start the frontend (no backend needed)
+pnpm dev:client
+```
+
+This starts only the frontend on port 3000. The frontend will make HTTP requests directly to your Lambda Function URL.
+
+**Note:** You can still run `pnpm dev` if you want - the Express server will show a message that it's in Lambda mode and won't actually start the HTTP server.
 
 ### Frontend Environment Variables
 

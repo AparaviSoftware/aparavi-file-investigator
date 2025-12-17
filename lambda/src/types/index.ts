@@ -77,6 +77,9 @@ export interface LambdaEvent {
 	body?: string;
 	message?: string;
 	data?: Record<string, any>;
+	httpMethod?: string;
+	path?: string;
+	headers?: Record<string, string>;
 }
 
 export interface LambdaResponse {
