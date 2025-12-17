@@ -213,29 +213,6 @@ For infrastructure-as-code deployment, consider using:
 }
 ```
 
-## Project Structure
-
-```
-lambda/
-├── src/
-│   ├── config/
-│   │   └── index.ts          # Configuration management
-│   ├── types/
-│   │   └── index.ts          # TypeScript type definitions
-│   ├── utils/
-│   │   ├── callout/          # Promise wrapper utility
-│   │   ├── logger/           # CloudWatch logging
-│   │   ├── pipelineOutput/   # Response extraction
-│   │   └── webhook/          # Webhook integration
-│   └── handler.ts            # Main Lambda handler
-├── dist/                      # Compiled output (generated)
-├── function.zip               # Deployment package (generated)
-├── package.json
-├── tsconfig.json
-├── .env.example
-└── README.md
-```
-
 ## Logging
 
 All operations are logged to CloudWatch Logs:

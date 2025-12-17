@@ -189,37 +189,6 @@ Root endpoint with API information.
 }
 ```
 
-## Project Structure
-
-```
-app/
-├── src/
-│   ├── server.ts               # Main Express application
-│   ├── config/
-│   │   └── index.ts           # Configuration management
-│   ├── router/
-│   │   ├── index.ts
-│   │   └── router.ts          # Auto-discovers component routes
-│   ├── components/
-│   │   └── chat/
-│   │       ├── routes.ts      # Chat endpoint routes
-│   │       └── controller.ts  # Chat business logic
-│   ├── middleware/
-│   │   └── errorHandler.ts   # Error handling middleware
-│   ├── utils/
-│   │   ├── callout.ts        # Promise wrapper utility
-│   │   └── extractOutput.ts  # Response parsing
-│   ├── translations/          # i18n translations
-│   └── types/
-│       ├── index.ts          # Type definitions
-│       └── express.d.ts      # Express type extensions
-├── dist/                      # Compiled output (generated)
-├── Dockerfile
-├── docker-compose.yml
-├── package.json
-└── tsconfig.json
-```
-
 ## Security Features
 
 - **Helmet.js**: Security headers (XSS protection, CSP, etc.)

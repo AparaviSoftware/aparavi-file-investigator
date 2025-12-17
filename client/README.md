@@ -185,33 +185,6 @@ VITE_API_URL=https://your-backend-domain.com
 
 **Important**: Environment variables are baked into the build at build time, so you must rebuild if they change.
 
-## Project Structure
-
-```
-client/
-├── src/
-│   ├── components/
-│   │   ├── About.tsx          # About page component
-│   │   ├── ChatInput.tsx      # Message input component
-│   │   ├── ChatMessage.tsx    # Message display component
-│   │   └── LoadingDots.tsx    # Loading animation
-│   ├── pages/
-│   │   └── FilesChatbot.tsx   # Main chat page
-│   ├── services/
-│   │   └── api.ts             # API client for backend
-│   ├── types/
-│   │   └── index.ts           # TypeScript type definitions
-│   ├── App.tsx                # Main app component & routing
-│   ├── main.tsx               # Entry point
-│   └── index.css              # Global styles
-├── public/                     # Static assets
-├── dist/                       # Production build (generated)
-├── index.html                  # HTML template
-├── package.json
-├── vite.config.ts              # Vite configuration
-└── tsconfig.json               # TypeScript configuration
-```
-
 ## Backend Configuration
 
 The frontend can work with two backend types:
