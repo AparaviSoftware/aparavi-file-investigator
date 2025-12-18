@@ -15,9 +15,9 @@ export const t = {
 		subtitle: 'Ask grounded questions against 100 thousand pages of the Epstein Files.'
 	},
 	suggestedQuestions: [
-		'Was the CIA really responsible for Epstein\'s assassination?',
-		'What is the relationship between Donald Trump and Epstein?',
-		'Were the guards really asleep during Epstein\'s suicide?'
+		'Who were Epstein\'s primary associates, business partners, and other influential connections?',
+		'What role did surveillance equipment, private security, or social media play in Epstein\'s operations?',
+		'How did the media cover Epstein\'s story over time, and were there instances of intentional suppression of information?'
 	],
 	input: {
 		placeholder: 'Ask anything...',
