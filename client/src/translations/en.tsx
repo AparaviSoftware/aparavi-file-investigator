@@ -17,7 +17,7 @@ export const t = {
 	suggestedQuestions: [
 		'Who were Epstein\'s primary associates, business partners, and other influential connections?',
 		'What role did surveillance equipment, private security, or social media play in Epstein\'s operations?',
-		'How did the media cover Epstein\'s story over time, and were there instances of intentional suppression of information?'
+		'How did the media cover Epstein\'s story over time, and were there instances of information suppression?'
 	],
 	input: {
 		placeholder: 'Ask anything...',
@@ -37,5 +37,26 @@ export const t = {
 	},
 	footer: {
 		disclaimer: 'AI can make mistakes. Just like every weirdo who visited the island.'
+	},
+	about: {
+		title: 'About this project',
+		features: {
+			skipManualSearching: {
+				title: 'Skip manual searching',
+				description: 'No more jumping between PDFs, tabs, and keyword searches. Ask once and get a clear, readable answer.'
+			},
+			structuredResearch: {
+				title: 'Get structured research instantly',
+				description: 'Generate summaries, timelines, key people/organizations, and "what changed between releases" in minutes.'
+			},
+			startWithContext: {
+				title: 'Start with context, not scratch',
+				description: 'No need to load the full story or search through the web. Everything is centered on the Epstein files from the start.'
+			},
+			researchFlow: {
+				title: 'Built for research flow, not casual browsing',
+				description: 'Prompts and outputs help with research, including notes, summaries, timelines, and easy-to-share briefs.'
+			}
+		}
 	}
 };

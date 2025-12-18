@@ -7,6 +7,7 @@ import SuggestedQuestions from '../../components/SuggestedQuestions';
 import InputBox from '../../components/InputBox';
 import ChatMessage from '../../components/ChatMessage';
 import LoadingDots from '../../components/LoadingDots';
+import AboutProject from '../../components/AboutProject';
 import { sendChatMessage } from '../../services/api';
 import {
 	loadConversation,
@@ -250,6 +251,16 @@ export default function FilesChatbot() {
 										isChatStarted={isChatStarted}
 										disabled={hasReachedQueryLimit(conversationState) || isLoading}
 										isLoading={isLoading}
+									/>
+								</div>
+
+								{/* About Project Section */}
+								<div
+									className={`transition-all duration-700 mt-8 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
+								>
+									<AboutProject
+										title={t.about.title}
+										features={t.about.features}
 									/>
 								</div>
 							</div>
