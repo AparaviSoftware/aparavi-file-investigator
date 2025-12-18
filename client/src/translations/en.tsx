@@ -36,10 +36,11 @@ export const t = {
 		)
 	},
 	footer: {
-		disclaimer: 'AI can make mistakes. Just like every weirdo who visited the island.'
+		disclaimer: 'AI can make mistakes.'
 	},
 	about: {
 		title: 'About this project',
+		videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
 		features: {
 			skipManualSearching: {
 				title: 'Skip manual searching',

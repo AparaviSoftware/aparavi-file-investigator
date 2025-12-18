@@ -218,7 +218,7 @@ export default function FilesChatbot() {
 						className={`flex-1 flex flex-col transition-all duration-700 ${isChatStarted ? 'justify-start overflow-hidden min-h-0' : 'items-center justify-start pt-6'}`}
 					>
 						{!isChatStarted && (
-							<div className="max-w-4xl w-full mx-auto flex flex-col px-4 sm:px-6">
+							<div className="max-w-[70rem] w-full mx-auto flex flex-col px-4 sm:px-6">
 								{/* Title Section - fades out when chat starts */}
 								<div
 									className={`transition-all duration-700 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
@@ -260,6 +260,7 @@ export default function FilesChatbot() {
 								>
 									<AboutProject
 										title={t.about.title}
+										videoUrl={t.about.videoUrl}
 										features={t.about.features}
 									/>
 								</div>
@@ -270,7 +271,7 @@ export default function FilesChatbot() {
 							<div className="flex-1 flex flex-col min-h-0 overflow-hidden">
 								{/* Chat Messages Area - scrollable container spans full width */}
 								<div className="chat-scrollbar flex-1 overflow-y-scroll animate-fade-in min-h-0 py-4 sm:py-6">
-									<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 space-y-3 sm:space-y-4">
+									<div className="max-w-[70rem] w-full mx-auto px-4 sm:px-6 space-y-3 sm:space-y-4">
 										{conversationState.messages.map((message, index) => (
 											<ChatMessage
 												key={message.id}
@@ -293,7 +294,7 @@ export default function FilesChatbot() {
 										transition: 'transform 700ms ease-out'
 									}}
 								>
-									<div className="max-w-4xl w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
+									<div className="max-w-[70rem] w-full mx-auto px-4 sm:px-6 py-3 sm:py-4">
 										<InputBox
 											query={query}
 											queriesLeft={stats.queriesRemaining}
@@ -307,14 +308,14 @@ export default function FilesChatbot() {
 										/>
 									</div>
 								</div>
+
+								{/* Footer */}
+								<footer className="flex-shrink-0 text-center py-2 sm:py-3 text-xs sm:text-sm text-gray-500 px-4 bg-gray-50">
+									{t.footer.disclaimer}
+								</footer>
 							</div>
 						)}
 					</div>
-
-					{/* Footer */}
-					<footer className="text-center py-4 sm:py-6 text-xs sm:text-sm text-gray-500 px-4">
-						{t.footer.disclaimer}
-					</footer>
 				</main>
 			</div>
 		</>
