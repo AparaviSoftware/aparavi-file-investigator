@@ -40,7 +40,7 @@ export const t = {
 	},
 	about: {
 		title: 'About this project',
-		videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+		videoUrl: 'https://www.youtube.com/embed/c55Ea41PNTg',
 		features: {
 			skipManualSearching: {
 				title: 'Skip manual searching',
