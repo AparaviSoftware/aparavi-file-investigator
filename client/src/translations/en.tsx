@@ -5,6 +5,46 @@ export const t = {
 		name: 'FILE INVESTIGATOR',
 		poweredBy: 'POWERED BY'
 	},
+	home: {
+		title: 'Choose Your Investigation',
+		subtitle: 'Select a dataset to explore declassified files and historical documents',
+		datasetCards: {
+			epstein: {
+				name: 'Epstein Files',
+				description: 'Explore 100 thousand pages of the Epstein Files'
+			},
+			jfk: {
+				name: 'JFK Files',
+				description: 'Declassified documents on the JFK assassination'
+			},
+			ufo: {
+				name: 'UFO Files',
+				description: 'Unidentified Aerial Phenomena investigations'
+			}
+		},
+		about: {
+			title: 'About this project',
+			videoUrl: 'https://www.youtube.com/embed/c55Ea41PNTg',
+			features: {
+				skipManualSearching: {
+					title: 'Skip manual searching',
+					description: 'No more jumping between PDFs, tabs, and keyword searches. Ask once and get a clear, readable answer.'
+				},
+				structuredResearch: {
+					title: 'Get structured research instantly',
+					description: 'Generate summaries, timelines, key people/organizations, and "what changed between releases" in minutes.'
+				},
+				startWithContext: {
+					title: 'Start with context, not scratch',
+					description: 'No need to load the full story or search through the web. Everything is centered on the source files from the start.'
+				},
+				researchFlow: {
+					title: 'Built for research flow, not casual browsing',
+					description: 'Prompts and outputs help with research, including notes, summaries, timelines, and easy-to-share briefs.'
+				}
+			}
+		}
+	},
 	header: {
 		createChatbot: 'Create your own chatbot',
 		createChatbotShort: 'Create',

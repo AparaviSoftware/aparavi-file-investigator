@@ -10,6 +10,7 @@ export interface Message {
 }
 
 export interface ConversationMetadata {
+	datasetId: string;
 	totalQueries: number;
 	totalEdits: number;
 	totalRefreshes: number;
@@ -27,8 +28,22 @@ export interface ConversationState {
 	queriesRemaining: number;
 }
 
-const STORAGE_KEY = 'aparavi_conversation';
+const STORAGE_KEY_PREFIX = 'aparavi_conversation';
 const DEFAULT_QUERY_LIMIT = 25;
+
+/**
+ * Generates storage key for a specific dataset.
+ *
+ * @param {string} datasetId - The dataset identifier
+ *
+ * @return {string} Storage key for the dataset
+ *
+ * @example
+ *     const key = getStorageKey('epstein');
+ */
+function getStorageKey(datasetId: string): string {
+	return `${STORAGE_KEY_PREFIX}_${datasetId}`;
+}
 
 /**
  * Generates a unique message ID.
@@ -57,18 +72,21 @@ function generateConversationId(): string {
 /**
  * Creates a new empty conversation state.
  *
+ * @param {string} datasetId - The dataset identifier
+ *
  * @return {ConversationState} New conversation state
  *
  * @example
- *     const state = createNewConversation();
+ *     const state = createNewConversation('epstein');
  */
-function createNewConversation(): ConversationState {
+function createNewConversation(datasetId: string): ConversationState {
 	const fingerprint = getFingerprint();
 
 	return {
 		id: generateConversationId(),
 		messages: [],
 		metadata: {
+			datasetId,
 			totalQueries: 0,
 			totalEdits: 0,
 			totalRefreshes: 0,
@@ -85,17 +103,19 @@ function createNewConversation(): ConversationState {
 /**
  * Loads conversation state from local storage.
  *
+ * @param {string} datasetId - The dataset identifier
+ *
  * @return {ConversationState} Loaded or new conversation state
  *
  * @example
- *     const state = loadConversation();
+ *     const state = loadConversation('epstein');
  */
-export function loadConversation(): ConversationState {
+export function loadConversation(datasetId: string): ConversationState {
 	try {
-		const stored = localStorage.getItem(STORAGE_KEY);
+		const stored = localStorage.getItem(getStorageKey(datasetId));
 
 		if (!stored) {
-			return createNewConversation();
+			return createNewConversation(datasetId);
 		}
 
 		const state: ConversationState = JSON.parse(stored);
@@ -104,19 +124,19 @@ export function loadConversation(): ConversationState {
 		// Verify fingerprint matches
 		if (state.metadata.fingerprint !== fingerprint.fingerprint) {
 			// Different user/device, create new conversation
-			return createNewConversation();
+			return createNewConversation(datasetId);
 		}
 
 		// Increment refresh count
 		state.metadata.totalRefreshes += 1;
 		state.metadata.lastActivityTime = new Date().toISOString();
 
-		saveConversation(state);
+		saveConversation(state, datasetId);
 
 		return state;
 	} catch (error) {
 		console.error('Error loading conversation:', error);
-		return createNewConversation();
+		return createNewConversation(datasetId);
 	}
 }
 
@@ -124,15 +144,16 @@ export function loadConversation(): ConversationState {
  * Saves conversation state to local storage.
  *
  * @param {ConversationState} state - Conversation state to save
+ * @param {string} datasetId - The dataset identifier
  *
  * @return {void}
  *
  * @example
- *     saveConversation(conversationState);
+ *     saveConversation(conversationState, 'epstein');
  */
-export function saveConversation(state: ConversationState): void {
+export function saveConversation(state: ConversationState, datasetId: string): void {
 	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+		localStorage.setItem(getStorageKey(datasetId), JSON.stringify(state));
 	} catch (error) {
 		console.error('Error saving conversation:', error);
 	}
@@ -143,13 +164,14 @@ export function saveConversation(state: ConversationState): void {
  *
  * @param {ConversationState} state - Current conversation state
  * @param {string} content - Message content
+ * @param {string} datasetId - The dataset identifier
  *
  * @return {ConversationState} Updated conversation state
  *
  * @example
- *     const newState = addUserMessage(state, 'Hello');
+ *     const newState = addUserMessage(state, 'Hello', 'epstein');
  */
-export function addUserMessage(state: ConversationState, content: string): ConversationState {
+export function addUserMessage(state: ConversationState, content: string, datasetId: string): ConversationState {
 	const message: Message = {
 		id: generateMessageId(),
 		role: 'user',
@@ -168,7 +190,7 @@ export function addUserMessage(state: ConversationState, content: string): Conve
 		queriesRemaining: Math.max(0, state.queriesRemaining - 1)
 	};
 
-	saveConversation(newState);
+	saveConversation(newState, datasetId);
 	return newState;
 }
 
@@ -177,13 +199,14 @@ export function addUserMessage(state: ConversationState, content: string): Conve
  *
  * @param {ConversationState} state - Current conversation state
  * @param {string} content - Message content
+ * @param {string} datasetId - The dataset identifier
  *
  * @return {ConversationState} Updated conversation state
  *
  * @example
- *     const newState = addAssistantMessage(state, 'Hi there!');
+ *     const newState = addAssistantMessage(state, 'Hi there!', 'epstein');
  */
-export function addAssistantMessage(state: ConversationState, content: string): ConversationState {
+export function addAssistantMessage(state: ConversationState, content: string, datasetId: string): ConversationState {
 	const message: Message = {
 		id: generateMessageId(),
 		role: 'assistant',
@@ -200,7 +223,7 @@ export function addAssistantMessage(state: ConversationState, content: string): 
 		}
 	};
 
-	saveConversation(newState);
+	saveConversation(newState, datasetId);
 	return newState;
 }
 
@@ -210,13 +233,14 @@ export function addAssistantMessage(state: ConversationState, content: string): 
  * @param {ConversationState} state - Current conversation state
  * @param {string} messageId - ID of message to edit
  * @param {string} newContent - New message content
+ * @param {string} datasetId - The dataset identifier
  *
  * @return {ConversationState} Updated conversation state
  *
  * @example
- *     const newState = editMessage(state, 'msg_123', 'Updated text');
+ *     const newState = editMessage(state, 'msg_123', 'Updated text', 'epstein');
  */
-export function editMessage(state: ConversationState, messageId: string, newContent: string): ConversationState {
+export function editMessage(state: ConversationState, messageId: string, newContent: string, datasetId: string): ConversationState {
 	const messageIndex = state.messages.findIndex(msg => msg.id === messageId);
 
 	if (messageIndex === -1) {
@@ -244,7 +268,7 @@ export function editMessage(state: ConversationState, messageId: string, newCont
 		queriesRemaining: Math.max(0, state.queriesRemaining - 1)
 	};
 
-	saveConversation(newState);
+	saveConversation(newState, datasetId);
 	return newState;
 }
 
@@ -252,13 +276,14 @@ export function editMessage(state: ConversationState, messageId: string, newCont
  * Tracks a regeneration in the conversation metadata and decrements query limit.
  *
  * @param {ConversationState} state - Current conversation state
+ * @param {string} datasetId - The dataset identifier
  *
  * @return {ConversationState} Updated conversation state
  *
  * @example
- *     const newState = trackRegeneration(state);
+ *     const newState = trackRegeneration(state, 'epstein');
  */
-export function trackRegeneration(state: ConversationState): ConversationState {
+export function trackRegeneration(state: ConversationState, datasetId: string): ConversationState {
 	const newState: ConversationState = {
 		...state,
 		metadata: {
@@ -269,21 +294,23 @@ export function trackRegeneration(state: ConversationState): ConversationState {
 		queriesRemaining: Math.max(0, state.queriesRemaining - 1)
 	};
 
-	saveConversation(newState);
+	saveConversation(newState, datasetId);
 	return newState;
 }
 
 /**
  * Clears the conversation and creates a new one.
  *
+ * @param {string} datasetId - The dataset identifier
+ *
  * @return {ConversationState} New empty conversation state
  *
  * @example
- *     const newState = clearConversation();
+ *     const newState = clearConversation('epstein');
  */
-export function clearConversation(): ConversationState {
-	const newState = createNewConversation();
-	saveConversation(newState);
+export function clearConversation(datasetId: string): ConversationState {
+	const newState = createNewConversation(datasetId);
+	saveConversation(newState, datasetId);
 	return newState;
 }
 

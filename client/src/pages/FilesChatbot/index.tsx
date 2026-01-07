@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import Header from '../../components/Header';
 import HeroBanner from '../../components/HeroBanner';
@@ -7,7 +8,6 @@ import SuggestedQuestions from '../../components/SuggestedQuestions';
 import InputBox from '../../components/InputBox';
 import ChatMessage from '../../components/ChatMessage';
 import LoadingDots from '../../components/LoadingDots';
-import AboutProject from '../../components/AboutProject';
 import { sendChatMessage } from '../../services/api';
 import {
 	loadConversation,
@@ -24,6 +24,8 @@ import { t } from '../../translations/en';
 import './styles.css';
 
 export default function FilesChatbot() {
+	const { datasetId } = useParams<{ datasetId: string }>();
+	const navigate = useNavigate();
 	const [query, setQuery] = useState('');
 	const [conversationState, setConversationState] = useState<ConversationState | null>(null);
 	const [isChatStarted, setIsChatStarted] = useState(false);
@@ -32,19 +34,29 @@ export default function FilesChatbot() {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const mainInputRef = useRef<HTMLDivElement>(null);
 
-	// TODO: Replace with state variable when dataset switching is implemented
-	const currentDataset = t.datasets.epstein;
+	if (!datasetId || !(datasetId in t.datasets)) {
+		navigate('/');
+		return null;
+	}
 
-	// Load conversation on mount
+	const currentDataset = t.datasets[datasetId as keyof typeof t.datasets];
+
+	// Load conversation when dataset changes
 	useEffect(() => {
-		const state = loadConversation();
-		setConversationState(state);
+		if (datasetId) {
+			const state = loadConversation(datasetId);
+			setConversationState(state);
 
-		// If conversation has messages, start in chat mode
-		if (state.messages.length > 0) {
-			setIsChatStarted(true);
+			// If conversation has messages, start in chat mode
+			if (state.messages.length > 0) {
+				setIsChatStarted(true);
+			} else {
+				setIsChatStarted(false);
+			}
+
+			setQuery('');
 		}
-	}, []);
+	}, [datasetId]);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -86,19 +98,19 @@ export default function FilesChatbot() {
 		setIsChatStarted(true);
 
 		// Add user message
-		const newState = addUserMessage(conversationState, question);
+		const newState = addUserMessage(conversationState, question, datasetId);
 		setConversationState(newState);
 		setQuery('');
 		setIsLoading(true);
 
 		try {
 			const response = await sendChatMessage(question);
-			const finalState = addAssistantMessage(newState, response.message);
+			const finalState = addAssistantMessage(newState, response.message, datasetId);
 			setConversationState(finalState);
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : 'An error occurred';
 			toast.error(errorMessage);
-			const finalState = addAssistantMessage(newState, `Error: ${errorMessage}`);
+			const finalState = addAssistantMessage(newState, `Error: ${errorMessage}`, datasetId);
 			setConversationState(finalState);
 		} finally {
 			setIsLoading(false);
@@ -131,18 +143,18 @@ export default function FilesChatbot() {
 			};
 
 			// Track the regeneration (without creating a new query)
-			const newState = trackRegeneration(truncatedState);
+			const newState = trackRegeneration(truncatedState, datasetId);
 			setConversationState(newState);
 			setIsLoading(true);
 
 			try {
 				const response = await sendChatMessage(userQuestion);
-				const finalState = addAssistantMessage(newState, response.message);
+				const finalState = addAssistantMessage(newState, response.message, datasetId);
 				setConversationState(finalState);
 			} catch (error) {
 				const errorMessage = error instanceof Error ? error.message : 'An error occurred';
 				toast.error(errorMessage);
-				const finalState = addAssistantMessage(newState, `Error: ${errorMessage}`);
+				const finalState = addAssistantMessage(newState, `Error: ${errorMessage}`, datasetId);
 				setConversationState(finalState);
 			} finally {
 				setIsLoading(false);
@@ -162,7 +174,7 @@ export default function FilesChatbot() {
 		if (!messageToEdit) return;
 
 		// Edit the message and remove all messages after it
-		const editedState = editMessage(conversationState, messageToEdit.id, newMessage);
+		const editedState = editMessage(conversationState, messageToEdit.id, newMessage, datasetId);
 		const truncatedState = {
 			...editedState,
 			messages: editedState.messages.slice(0, index + 1)
@@ -173,12 +185,12 @@ export default function FilesChatbot() {
 
 		try {
 			const response = await sendChatMessage(newMessage);
-			const finalState = addAssistantMessage(truncatedState, response.message);
+			const finalState = addAssistantMessage(truncatedState, response.message, datasetId);
 			setConversationState(finalState);
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : 'An error occurred';
 			toast.error(errorMessage);
-			const finalState = addAssistantMessage(truncatedState, `Error: ${errorMessage}`);
+			const finalState = addAssistantMessage(truncatedState, `Error: ${errorMessage}`, datasetId);
 			setConversationState(finalState);
 		} finally {
 			setIsLoading(false);
@@ -186,7 +198,8 @@ export default function FilesChatbot() {
 	};
 
 	const handleClearConversation = () => {
-		const newState = clearConversation();
+		if (!datasetId) return;
+		const newState = clearConversation(datasetId);
 		setConversationState(newState);
 		setIsChatStarted(false);
 		setQuery('');
@@ -254,17 +267,6 @@ export default function FilesChatbot() {
 										isChatStarted={isChatStarted}
 										disabled={hasReachedQueryLimit(conversationState) || isLoading}
 										isLoading={isLoading}
-									/>
-								</div>
-
-								{/* About Project Section */}
-								<div
-									className={`transition-all duration-700 mt-8 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
-								>
-									<AboutProject
-										title={currentDataset.about.title}
-										videoUrl={currentDataset.about.videoUrl}
-										features={currentDataset.about.features}
 									/>
 								</div>
 							</div>
