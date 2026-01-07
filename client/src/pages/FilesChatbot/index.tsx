@@ -32,6 +32,9 @@ export default function FilesChatbot() {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const mainInputRef = useRef<HTMLDivElement>(null);
 
+	// TODO: Replace with state variable when dataset switching is implemented
+	const currentDataset = t.datasets.epstein;
+
 	// Load conversation on mount
 	useEffect(() => {
 		const state = loadConversation();
@@ -61,7 +64,7 @@ export default function FilesChatbot() {
 	}, [isChatStarted, chatInputTransform]);
 
 	const showOutOfQueriesToast = () => {
-		toast.error(t.errors.outOfQueries);
+		toast.error(currentDataset.errors.outOfQueries);
 	};
 
 	const handleSubmit = async (question: string) => {
@@ -224,8 +227,8 @@ export default function FilesChatbot() {
 									className={`transition-all duration-700 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<TitleSection
-										title={t.hero.title}
-										subtitle={t.hero.subtitle}
+										title={currentDataset.hero.title}
+										subtitle={currentDataset.hero.subtitle}
 									/>
 								</div>
 
@@ -234,7 +237,7 @@ export default function FilesChatbot() {
 									className={`transition-all duration-700 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<SuggestedQuestions
-										questions={t.suggestedQuestions}
+										questions={currentDataset.suggestedQuestions}
 										onQuestionClick={setQuery}
 									/>
 								</div>
@@ -259,9 +262,9 @@ export default function FilesChatbot() {
 									className={`transition-all duration-700 mt-8 ${isChatStarted ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'}`}
 								>
 									<AboutProject
-										title={t.about.title}
-										videoUrl={t.about.videoUrl}
-										features={t.about.features}
+										title={currentDataset.about.title}
+										videoUrl={currentDataset.about.videoUrl}
+										features={currentDataset.about.features}
 									/>
 								</div>
 							</div>
