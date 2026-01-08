@@ -1,20 +1,21 @@
-import { Plus, RotateCcw } from 'lucide-react';
+import { Plus, RotateCcw, MessageSquare } from 'lucide-react';
 import aparaviLogo from '../../assets/aparavi-logo.png';
 import { t } from '../../translations/en';
 
 interface HeaderProps {
 	hasMessages?: boolean;
 	onClearConversation?: () => void;
+	title?: string;
 }
 
-export default function Header({ hasMessages = false, onClearConversation }: HeaderProps) {
+export default function Header({ hasMessages = false, onClearConversation, title }: HeaderProps) {
 	return (
 		<header className="bg-gray-50 text-gray-800 px-3 sm:px-6 py-3 sm:py-4">
 			<div className="flex items-center justify-between">
 				{/* Left section */}
 				<div className="flex-1">
 					<a href="/" className="text-xs sm:text-sm font-medium tracking-wide hover:text-gray-600 transition-colors whitespace-nowrap">
-						{t.app.name}
+						{title || t.app.name}
 					</a>
 				</div>
 
@@ -35,7 +36,7 @@ export default function Header({ hasMessages = false, onClearConversation }: Hea
 					</a>
 				</div>
 
-				{/* Right section - Clear button + Create chatbot button */}
+				{/* Right section - Clear button + Share feedback + Create chatbot button */}
 				<div className="flex-1 flex items-center justify-end gap-2">
 					{/* Clear conversation button - only shows when there are messages */}
 					{hasMessages && onClearConversation && (
@@ -48,6 +49,15 @@ export default function Header({ hasMessages = false, onClearConversation }: Hea
 							<span className="hidden sm:inline">Clear</span>
 						</button>
 					)}
+
+					<button
+						onClick={() => window.open('https://forms.gle/feedback', '_blank')}
+						className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors whitespace-nowrap"
+					>
+						<span className="hidden sm:inline">Share your feedback</span>
+						<span className="sm:hidden">Feedback</span>
+						<MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+					</button>
 
 					<a
 						href={t.header.createChatbotUrl}

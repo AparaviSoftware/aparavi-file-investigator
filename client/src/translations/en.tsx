@@ -11,15 +11,18 @@ export const t = {
 		datasetCards: {
 			epstein: {
 				name: 'Epstein Files',
-				description: 'Explore 100 thousand pages of the Epstein Files'
+				description: 'Explore 100,000 pages of the Epstein Files',
+				documentCount: '80,000'
 			},
 			jfk: {
 				name: 'JFK Files',
-				description: 'Declassified documents on the JFK assassination'
+				description: 'Declassified documents on the JFK assasination',
+				documentCount: '26,000'
 			},
 			ufo: {
 				name: 'UFO Files',
-				description: 'Unidentified Aerial Phenomena investigations'
+				description: 'Unidentified Aerial Phenomena investigations',
+				documentCount: '126,000'
 			}
 		},
 		about: {
