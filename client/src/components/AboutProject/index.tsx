@@ -64,8 +64,8 @@ export default function AboutProject({ title, videoUrl, features }: AboutProject
 	];
 
 	return (
-		<div className="w-full py-12 sm:py-16 bg-white">
-			<div className="max-w-[70rem] mx-auto px-4 sm:px-6">
+		<div className="w-full py-12 sm:py-16 bg-white rounded-lg">
+			<div className="w-full">
 				<h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-12">
 					{title}
 				</h2>

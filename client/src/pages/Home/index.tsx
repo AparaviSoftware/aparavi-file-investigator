@@ -103,13 +103,13 @@ export default function Home() {
 								</button>
 							))}
 						</div>
-					</div>
 
-					<AboutProject
-						title={t.home.about.title}
-						videoUrl={t.home.about.videoUrl}
-						features={t.home.about.features}
-					/>
+						<AboutProject
+							title={t.home.about.title}
+							videoUrl={t.home.about.videoUrl}
+							features={t.home.about.features}
+						/>
+					</div>
 				</div>
 			</main>
 		</div>
