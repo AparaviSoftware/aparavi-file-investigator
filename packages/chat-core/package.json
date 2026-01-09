@@ -1,0 +1,43 @@
+{
+	"name": "@aparavi/chat-core",
+	"version": "1.0.0",
+	"description": "Core chat functionality shared between Express and Lambda implementations",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc --watch",
+		"clean": "rm -rf dist",
+		"type-check": "tsc --noEmit",
+		"test": "mocha --require tsx --extensions ts --recursive src/**/test.ts",
+		"test:watch": "mocha --require tsx --extensions ts --recursive src/**/test.ts --watch"
+	},
+	"keywords": [
+		"chat",
+		"webhook",
+		"pipeline",
+		"aparavi"
+	],
+	"author": "Aparavi",
+	"license": "MIT",
+	"dependencies": {
+		"axios": "^1.6.7"
+	},
+	"devDependencies": {
+		"@types/node": "^20.11.17",
+		"typescript": "^5.3.3",
+		"@types/chai": "4.3.20",
+		"@types/mocha": "^10.0.10",
+		"@types/sinon": "^21.0.0",
+		"@types/sinon-chai": "^4.0.0",
+		"chai": "4.5.0",
+		"mocha": "^11.7.5",
+		"sinon": "^21.0.0",
+		"sinon-chai": "^4.0.1",
+		"tsx": "^4.21.0"
+	},
+	"engines": {
+		"node": ">=18.0.0",
+		"pnpm": ">=8.0.0"
+	}
+}
