@@ -51,7 +51,7 @@ export default function Header({ hasMessages = false, onClearConversation, title
 					)}
 
 					<button
-						onClick={() => window.open('https://forms.gle/feedback', '_blank')}
+						onClick={() => window.open('https://aparavicannyui-production.up.railway.app/', '_blank')}
 						className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors whitespace-nowrap"
 					>
 						<span className="hidden sm:inline">Share your feedback</span>
