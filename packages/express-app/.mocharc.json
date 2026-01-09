@@ -1,7 +1,7 @@
 {
-	"require": ["tsconfig-paths/register", "ts-node/register"],
+	"require": ["tsconfig-paths/register", "tsx"],
 	"extensions": ["ts"],
-	"spec": ["src/**/test.ts"],
+	"spec": ["src/**/*.test.ts"],
 	"recursive": true,
 	"timeout": 5000,
 	"color": true,

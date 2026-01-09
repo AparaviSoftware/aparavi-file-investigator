@@ -9,8 +9,8 @@
     "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/bin/www.ts",
     "watch": "tsc --watch",
     "clean": "rm -rf dist",
-    "test": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive src/**/test.ts",
-    "test:watch": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive src/**/test.ts --watch",
+    "test": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive 'src/**/*.test.ts'",
+    "test:watch": "mocha --require tsconfig-paths/register --require tsx --extensions ts --recursive 'src/**/*.test.ts' --watch",
     "lint": "eslint . --ext .ts",
     "type-check": "tsc --noEmit",
     "preinstall": "npx only-allow pnpm"

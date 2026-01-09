@@ -1,4 +1,7 @@
-const CHATBOT_TEMPLATE_URL = 'https://dtc.aparavi.com/projects/new?templateId=74ef36f1-19c3-4a22-9fa0-b79d9aa42834';
+const CHATBOT_TEMPLATE_URL = 'https://aparavi.com/create-your-own-chatbot/';
+const FEEDBACK_URL = 'https://aparavi.canny.io/file-explorer';
+const HOME_VIDEO_URL = 'https://f.io/imDj-aZ6';
+const DATASET_VIDEO_URL = 'https://www.youtube.com/embed/c55Ea41PNTg';
 
 export const t = {
 	app: {
@@ -27,7 +30,7 @@ export const t = {
 		},
 		about: {
 			title: 'About this project',
-			videoUrl: 'https://www.youtube.com/embed/c55Ea41PNTg',
+			videoUrl: HOME_VIDEO_URL,
 			features: {
 				skipManualSearching: {
 					title: 'Skip manual searching',
@@ -51,7 +54,10 @@ export const t = {
 	header: {
 		createChatbot: 'Create your own chatbot',
 		createChatbotShort: 'Create',
-		createChatbotUrl: CHATBOT_TEMPLATE_URL
+		createChatbotUrl: CHATBOT_TEMPLATE_URL,
+		shareFeedback: 'Share your feedback',
+		shareFeedbackShort: 'Feedback',
+		shareFeedbackUrl: FEEDBACK_URL
 	},
 	input: {
 		placeholder: 'Ask anything...',
@@ -85,7 +91,7 @@ export const t = {
 			},
 			about: {
 				title: 'About this project',
-				videoUrl: 'https://www.youtube.com/embed/c55Ea41PNTg',
+				videoUrl: DATASET_VIDEO_URL,
 				features: {
 					skipManualSearching: {
 						title: 'Skip manual searching',
@@ -130,7 +136,7 @@ export const t = {
 			},
 			about: {
 				title: 'About this project',
-				videoUrl: 'https://www.youtube.com/embed/c55Ea41PNTg',
+				videoUrl: DATASET_VIDEO_URL,
 				features: {
 					skipManualSearching: {
 						title: 'Skip manual searching',
@@ -175,7 +181,7 @@ export const t = {
 			},
 			about: {
 				title: 'About this project',
-				videoUrl: 'https://www.youtube.com/embed/c55Ea41PNTg',
+				videoUrl: DATASET_VIDEO_URL,
 				features: {
 					skipManualSearching: {
 						title: 'Skip manual searching',

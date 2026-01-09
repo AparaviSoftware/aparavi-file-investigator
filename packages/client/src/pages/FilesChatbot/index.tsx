@@ -226,7 +226,7 @@ export default function FilesChatbot() {
 					<div
 						className={`transition-all duration-700 w-full ${isChatStarted ? '-translate-y-full opacity-0 absolute' : 'translate-y-0 opacity-100'}`}
 					>
-						<HeroBanner />
+						<HeroBanner datasetId={datasetId} />
 					</div>
 
 					{/* Content wrapper */}

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../test/testUtils';
 import Header from './index';
+import { t } from '../../translations/en';
 
 describe('Header', () => {
 	describe('when rendered', () => {
@@ -47,7 +48,7 @@ describe('Header', () => {
 
 			const createButton = screen.getByText('Create your own chatbot');
 			const createLink = createButton.closest('a');
-			expect(createLink).toHaveAttribute('href', 'https://dtc.aparavi.com/projects/new?templateId=74ef36f1-19c3-4a22-9fa0-b79d9aa42834');
+			expect(createLink).toHaveAttribute('href', t.header.createChatbotUrl);
 			expect(createLink).toHaveAttribute('target', '_blank');
 			expect(createLink).toHaveAttribute('rel', 'noopener noreferrer');
 		});

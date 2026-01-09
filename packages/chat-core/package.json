@@ -9,8 +9,8 @@
 		"watch": "tsc --watch",
 		"clean": "rm -rf dist",
 		"type-check": "tsc --noEmit",
-		"test": "mocha --require tsx --extensions ts --recursive src/**/test.ts",
-		"test:watch": "mocha --require tsx --extensions ts --recursive src/**/test.ts --watch"
+		"test": "mocha --require tsx --extensions ts --recursive 'src/**/*.test.ts'",
+		"test:watch": "mocha --require tsx --extensions ts --recursive 'src/**/*.test.ts' --watch"
 	},
 	"keywords": [
 		"chat",

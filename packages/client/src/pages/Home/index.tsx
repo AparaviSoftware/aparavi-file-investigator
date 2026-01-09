@@ -4,6 +4,9 @@ import Header from '../../components/Header';
 import AboutProject from '../../components/AboutProject';
 import { t } from '../../translations/en';
 import documentBg from '../../assets/document-files-bg.png';
+import jfkBanner from '../../assets/jfk-banner.png';
+import ufoBanner from '../../assets/ufo-banner.png';
+import epsteinBanner from '../../assets/epstein-banner.png';
 
 type DatasetCardData = {
 	id: 'epstein' | 'jfk' | 'ufo';
@@ -13,6 +16,12 @@ type DatasetCardData = {
 	icon: React.ComponentType<{ className?: string }>;
 	route: string;
 }
+
+const datasetBanners: Record<string, string> = {
+	jfk: jfkBanner,
+	ufo: ufoBanner,
+	epstein: epsteinBanner
+};
 
 export default function Home() {
 	const navigate = useNavigate();
@@ -74,7 +83,7 @@ export default function Home() {
 									{/* Image header with icon overlay */}
 									<div className="relative h-32 bg-gray-800">
 										<img
-											src={documentBg}
+											src={datasetBanners[dataset.id] || documentBg}
 											alt=""
 											className="w-full h-full object-cover grayscale opacity-50"
 										/>
