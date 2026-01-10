@@ -4,9 +4,9 @@ import Header from '../../components/Header';
 import AboutProject from '../../components/AboutProject';
 import { t } from '../../translations/en';
 import documentBg from '../../assets/document-files-bg.png';
-import jfkBanner from '../../assets/jfk-banner.png';
-import ufoBanner from '../../assets/ufo-banner.png';
-import epsteinBanner from '../../assets/epstein-banner.png';
+import jfkBanner from '../../assets/jfk-banner.jpg';
+import ufoBanner from '../../assets/ufo-banner.jpg';
+import epsteinBanner from '../../assets/epstein-banner.jpg';
 
 type DatasetCardData = {
 	id: 'epstein' | 'jfk' | 'ufo';

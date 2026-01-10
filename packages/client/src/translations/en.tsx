@@ -1,6 +1,6 @@
 const CHATBOT_TEMPLATE_URL = 'https://aparavi.com/create-your-own-chatbot/';
 const FEEDBACK_URL = 'https://aparavi.canny.io/file-explorer';
-const HOME_VIDEO_URL = 'https://f.io/imDj-aZ6';
+const HOME_VIDEO_URL = 'https://www.youtube.com/embed/_sggv0p5Li0';
 const DATASET_VIDEO_URL = 'https://www.youtube.com/embed/c55Ea41PNTg';
 
 export const t = {

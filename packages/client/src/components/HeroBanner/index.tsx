@@ -1,7 +1,7 @@
 import documentFilesBg from '../../assets/document-files-bg.png';
-import jfkBanner from '../../assets/jfk-banner.png';
-import ufoBanner from '../../assets/ufo-banner.png';
-import epsteinBanner from '../../assets/epstein-banner.png';
+import jfkBanner from '../../assets/jfk-banner.jpg';
+import ufoBanner from '../../assets/ufo-banner.jpg';
+import epsteinBanner from '../../assets/epstein-banner.jpg';
 
 type HeroBannerProps = {
 	datasetId?: string;
