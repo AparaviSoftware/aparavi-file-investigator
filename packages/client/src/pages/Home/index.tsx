@@ -81,10 +81,13 @@ export default function Home() {
 									className="bg-white border border-gray-200 rounded-lg overflow-hidden text-left hover:border-gray-300 hover:shadow-md transition-all duration-200"
 								>
 									{/* Image header with icon overlay */}
-									<div className="relative h-32 bg-gray-800">
+									<div className="relative h-32 bg-gray-800" style={{ aspectRatio: '1044/258' }}>
 										<img
 											src={datasetBanners[dataset.id] || documentBg}
 											alt=""
+											width={1044}
+											height={258}
+											fetchPriority="high"
 											className="w-full h-full object-cover grayscale opacity-50"
 										/>
 										<div className="absolute bottom-0 left-0 p-4">
