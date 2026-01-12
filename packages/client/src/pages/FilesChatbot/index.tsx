@@ -218,7 +218,7 @@ export default function FilesChatbot() {
 				<Header
 					hasMessages={conversationState.messages.length > 0}
 					onClearConversation={handleClearConversation}
-					title={currentDataset.hero.title.toUpperCase()}
+					title={currentDataset.navTitle.toUpperCase()}
 				/>
 
 				{/* Main Content */}

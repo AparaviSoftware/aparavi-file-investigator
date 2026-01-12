@@ -68,6 +68,7 @@ export const t = {
 	},
 	datasets: {
 		epstein: {
+			navTitle: 'Epstein Files Investigator',
 			hero: {
 				title: 'Chat with the Epstein Files',
 				subtitle: 'Ask grounded questions against 100 thousand pages of the Epstein Files.'
@@ -113,6 +114,7 @@ export const t = {
 			}
 		},
 		jfk: {
+			navTitle: 'JFK Files Investigator',
 			hero: {
 				title: 'Chat with the JFK Files',
 				subtitle: 'Explore declassified documents related to the assassination of President John F. Kennedy.'
@@ -158,6 +160,7 @@ export const t = {
 			}
 		},
 		ufo: {
+			navTitle: 'UFO Files Investigator',
 			hero: {
 				title: 'Chat with the UFO Files',
 				subtitle: 'Investigate declassified government documents on Unidentified Aerial Phenomena (UAP).'
