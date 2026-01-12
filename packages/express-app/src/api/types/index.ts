@@ -2,6 +2,14 @@
 // Configuration Types
 // ============================================================================
 
+export interface PipelineConfig {
+	baseUrl: string;
+	apiKey: string;
+	authorizationKey: string;
+	token: string;
+	timeout: number;
+}
+
 export interface Config {
 	port: number;
 	nodeEnv: string;
@@ -14,6 +22,9 @@ export interface Config {
 		authorizationKey: string;
 		token: string;
 		timeout: number;
+	};
+	pipelines: {
+		[key: string]: PipelineConfig;
 	};
 	rateLimit: {
 		windowMs: number;
@@ -47,6 +58,7 @@ export interface ChatRequestBody {
 	message?: string;
 	data?: Record<string, any>;
 	fingerprint?: FingerprintData;
+	datasetId?: string;
 }
 
 export interface ChatResponse {

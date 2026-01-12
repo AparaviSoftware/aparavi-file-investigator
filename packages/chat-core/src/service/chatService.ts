@@ -66,10 +66,7 @@ export default class ChatService {
 			const formattedError = Webhook.formatError(error);
 
 			if (logger) {
-				logger.error('Chat endpoint error', {
-					message: error.message,
-					...formattedError
-				});
+				logger.error('Chat endpoint error', formattedError);
 			}
 
 			return {

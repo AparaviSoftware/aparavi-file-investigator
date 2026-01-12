@@ -59,7 +59,7 @@ export default function Home() {
 
 	return (
 		<div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-			<Header hasMessages={false} title="EPSTEIN FILES CHATBOT" />
+			<Header hasMessages={false} />
 
 			<main className="flex-1 overflow-y-auto">
 				<div className="flex flex-col items-center px-4 sm:px-6 py-8">

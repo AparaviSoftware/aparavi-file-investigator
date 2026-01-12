@@ -9,18 +9,20 @@ const LAMBDA_API_URL = import.meta.env.VITE_LAMBDA_URL || '';
  * Sends a chat message to the backend API
  *
  * @param {string} message - The user's message
+ * @param {string} datasetId - The dataset ID to use for the pipeline
  *
  * @return {Promise<ChatResponse>} The API response
  *
  * @example
- *     const response = await sendChatMessage('What files do you have?');
+ *     const response = await sendChatMessage('What files do you have?', 'epstein');
  */
-export async function sendChatMessage(message: string): Promise<ChatResponse> {
+export async function sendChatMessage(message: string, datasetId?: string): Promise<ChatResponse> {
 	const fingerprintData = getFingerprint();
 
 	const requestBody: ChatRequestBody = {
 		message,
-		fingerprint: fingerprintData
+		fingerprint: fingerprintData,
+		datasetId
 	};
 
 	// Build the endpoint URL based on backend type

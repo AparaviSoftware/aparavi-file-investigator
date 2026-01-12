@@ -4,6 +4,7 @@ export interface ChatRequestBody {
 	message?: string;
 	data?: any;
 	fingerprint?: FingerprintData;
+	datasetId?: string;
 }
 
 export interface ChatResponse {

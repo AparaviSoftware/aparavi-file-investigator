@@ -104,7 +104,7 @@ export default function FilesChatbot() {
 		setIsLoading(true);
 
 		try {
-			const response = await sendChatMessage(question);
+			const response = await sendChatMessage(question, datasetId);
 			const finalState = addAssistantMessage(newState, response.message, datasetId);
 			setConversationState(finalState);
 		} catch (error) {
@@ -148,7 +148,7 @@ export default function FilesChatbot() {
 			setIsLoading(true);
 
 			try {
-				const response = await sendChatMessage(userQuestion);
+				const response = await sendChatMessage(userQuestion, datasetId);
 				const finalState = addAssistantMessage(newState, response.message, datasetId);
 				setConversationState(finalState);
 			} catch (error) {
@@ -184,7 +184,7 @@ export default function FilesChatbot() {
 		setIsLoading(true);
 
 		try {
-			const response = await sendChatMessage(newMessage);
+			const response = await sendChatMessage(newMessage, datasetId);
 			const finalState = addAssistantMessage(truncatedState, response.message, datasetId);
 			setConversationState(finalState);
 		} catch (error) {
@@ -218,6 +218,7 @@ export default function FilesChatbot() {
 				<Header
 					hasMessages={conversationState.messages.length > 0}
 					onClearConversation={handleClearConversation}
+					title={currentDataset.hero.title.toUpperCase()}
 				/>
 
 				{/* Main Content */}
