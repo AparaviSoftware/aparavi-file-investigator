@@ -1,4 +1,4 @@
-const CHATBOT_TEMPLATE_URL = 'https://dtc.aparavi.com/projects/new?templateId=74ef36f1-19c3-4a22-9fa0-b79d9aa42834';
+const CHATBOT_TEMPLATE_URL = 'https://aparavi.com/create-your-own-chatbot/';
 
 export const t = {
 	app: {
