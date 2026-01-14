@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../test/testUtils';
 import Header from './index';
 
+// Test the header rendering
 describe('Header', () => {
 	describe('when rendered', () => {
 		it('should display the app name', () => {
