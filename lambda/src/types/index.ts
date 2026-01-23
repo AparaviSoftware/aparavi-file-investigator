@@ -80,6 +80,14 @@ export interface LambdaEvent {
 	httpMethod?: string;
 	path?: string;
 	headers?: Record<string, string>;
+	// Lambda Function URL format (HTTP API v2)
+	requestContext?: {
+		http?: {
+			method?: string;
+			path?: string;
+		};
+	};
+	isBase64Encoded?: boolean;
 }
 
 export interface LambdaResponse {

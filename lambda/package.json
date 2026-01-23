@@ -4,9 +4,9 @@
 	"description": "AWS Lambda function for Aparavi chat webhook integration",
 	"main": "dist/handler.js",
 	"scripts": {
-		"build": "tsc",
+		"build": "esbuild src/handler.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/handler.js",
 		"clean": "rimraf dist function.zip",
-		"package": "npm run build && bestzip function.zip dist node_modules",
+		"package": "npm run build && bestzip function.zip dist",
 		"type-check": "tsc --noEmit",
 		"lint": "eslint . --ext .ts"
 	},
@@ -25,7 +25,8 @@
 		}
 	],
 	"dependencies": {
-		"axios": "^1.6.7"
+		"axios": "^1.6.7",
+		"form-data": "^4.0.0"
 	},
 	"devDependencies": {
 		"@types/aws-lambda": "^8.10.138",
@@ -33,6 +34,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"bestzip": "^2.2.1",
+		"esbuild": "^0.20.0",
 		"eslint": "^8.56.0",
 		"rimraf": "^6.1.2",
 		"typescript": "^5.3.3"
