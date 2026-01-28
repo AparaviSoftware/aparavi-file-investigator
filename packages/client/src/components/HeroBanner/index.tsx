@@ -27,7 +27,7 @@ export default function HeroBanner({ datasetId }: HeroBannerProps) {
 
 	return (
 		<div className="w-full px-4 sm:px-6">
-			<div className="w-full h-32 sm:h-40 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl bg-gray-800" style={{ aspectRatio: '1044/258' }}>
+			<div className="w-full h-40 sm:h-52 relative overflow-hidden rounded-t-xl sm:rounded-t-2xl bg-gray-800" style={{ aspectRatio: '1044/258' }}>
 				<img
 					src={bannerImage}
 					alt=""
