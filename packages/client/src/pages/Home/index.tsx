@@ -81,17 +81,17 @@ export default function Home() {
 									className="bg-white border border-gray-200 rounded-lg overflow-hidden text-left hover:border-gray-300 hover:shadow-md transition-all duration-200"
 								>
 									{/* Image header with icon overlay */}
-									<div className="relative h-32 bg-gray-800" style={{ aspectRatio: '1044/258' }}>
+									<div className="relative bg-gray-800" style={{ aspectRatio: '1044/258' }}>
 										<img
 											src={datasetBanners[dataset.id] || documentBg}
 											alt=""
 											width={1044}
 											height={258}
 											fetchPriority="high"
-											className="w-full h-full object-cover grayscale opacity-50"
+											className="w-full h-full object-contain grayscale opacity-50"
 										/>
 										<div className="absolute bottom-0 left-0 p-4">
-											<div className="p-2.5 bg-orange-500 rounded-full">
+											<div className="p-2.5 bg-orange-500 rounded-lg">
 												<dataset.icon className="w-5 h-5 text-white" />
 											</div>
 										</div>
@@ -99,7 +99,7 @@ export default function Home() {
 
 									{/* Card content */}
 									<div className="p-4 sm:p-5">
-										<h3 className="text-lg font-semibold text-gray-900 mb-2">
+										<h3 className="text-lg font-semibold text-gray-900 mb-1">
 											{dataset.name}
 										</h3>
 										<p className="text-sm text-gray-600 leading-relaxed mb-4">
