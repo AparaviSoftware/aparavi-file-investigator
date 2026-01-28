@@ -1,311 +1,158 @@
-# **CLAUDE.md**
+# CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working in this repository. It also defines the coding style, architectural expectations, error-handling patterns, test requirements, and development rules that Claude must follow to match the Aparavi development team coding standards.
-
----
-
-# **1. Project Overview**
-
-This is a full-stack TypeScript monorepo that provides a chat interface for interacting with Aparavi data pipeline webhooks.
-
-The two main components are:
-
-* **app/** — Express backend proxy server (port 3001)
-* **client/** — React frontend using Vite (port 3000)
-
-The backend acts as a secure proxy between the frontend and Aparavi webhook APIs, handling authentication, rate limiting, validation, and error processing. The frontend provides a chat UI for interacting with processed webhook responses.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 
-# **2. Development Commands**
+## Project Overview
 
-## **Root**
+Full-stack TypeScript monorepo providing a chat interface for querying Aparavi data pipeline webhooks across multiple datasets (Epstein, JFK, UFO).
 
+**Packages:**
+- `packages/chat-core/` — Shared business logic library (ChatService, utilities)
+- `packages/express-app/` — Express backend proxy server (port 3001)
+- `packages/client/` — React + Vite frontend (port 3000)
+
+---
+
+## Development Commands
+
+### Root
 ```bash
-pnpm install
-pnpm dev
-pnpm build
-pnpm start
-pnpm lint
-pnpm lint:fix
+pnpm install          # Install all dependencies
+pnpm dev              # Run backend + frontend concurrently
+pnpm build            # Build all packages (chat-core → express-app → client)
+pnpm test             # Run all tests
+pnpm lint             # Lint all packages
+pnpm lint:fix         # Fix lint issues
 ```
 
-## **Backend (app/)**
-
+### Run Single Package
 ```bash
-cd app
-pnpm dev
-pnpm build
-pnpm start
-pnpm test
-pnpm type-check
-pnpm lint
+pnpm dev:app          # Backend only
+pnpm dev:client       # Frontend only
 ```
 
-## **Frontend (client/)**
-
+### Package-Specific Tests
 ```bash
-cd client
-pnpm dev
-pnpm build
-pnpm preview
-pnpm lint
+pnpm test:chat-core   # Test shared library
+pnpm test:app         # Test backend
+pnpm test:client      # Test frontend
+```
+
+### Within Package Directories
+```bash
+cd packages/express-app
+pnpm test             # Mocha + Chai + Sinon
+pnpm type-check       # TypeScript validation
+
+cd packages/client
+pnpm test             # Vitest + React Testing Library
 ```
 
 ---
 
-# **3. Architecture**
+## Architecture
 
-## **Backend (app/src/)**
-
+### Data Flow
 ```
-├── server.ts
-├── config/
-├── router/
-│   ├── index.ts
-│   └── router.ts          # Auto-discovers component routes
-├── components/
-│   └── chat/
-│       ├── routes.ts
-│       └── controller.ts
-├── middleware/
-│   └── errorHandler.ts
-├── utils/
-│   ├── callout.ts
-│   └── extractOutput.ts
-├── translations/
-└── types/
+Client (React) → POST /api/chat → Express → ChatService.processChat() → Webhook API
 ```
 
-### **Backend Key Patterns**
+### Backend Key Patterns
 
-1. **Component Discovery:** `router.ts` automatically loads all `components/*/routes.ts` files.
-2. **Error Handling:** Uses a central `AppError` class + global handler.
-3. **Async Handling:** The `callout()` utility wraps promises into `[error, data]`.
-4. **Webhook Integration:** PUT requests include the API key in both header and query param; relevant text is extracted via utilities.
+1. **Route Auto-Discovery:** `src/api/router/router.ts` loads all `components/*/routes.ts` automatically
+2. **Multi-Pipeline Support:** Dataset-specific webhooks via `PIPELINE_{DATASET_ID}_{PROPERTY}` env vars
+3. **Path Aliases:** `@config`, `@utils`, `@middleware`, `@types`, `@components`, `@router`
 
-## **Frontend (client/src/)**
+### Chat-Core Library
 
-```
-├── pages/
-│   └── FilesChatbot.tsx
-├── components/
-├── types/
-```
+Shared between Express and future Lambda backends:
+- `ChatService.processChat()` — Core business logic
+- `Callout.call()` — Promise error wrapper returning `[error, data]`
+- `Webhook.*` — Payload/response formatting utilities
+- `PipelineOutput.extract()` — Response data extraction
 
-### **Frontend Key Patterns**
+### Frontend Key Patterns
 
-* State managed with React hooks
-* Backend communication through `/api/chat`
-* Markdown-enabled chat display
+- React Router: `/` (home) → `/chat/:datasetId` (chat page)
+- LocalStorage persistence per dataset via `conversationStorage.ts`
+- Browser fingerprinting for rate limiting via `fingerprint.ts`
 
 ---
 
-# **4. Environment Configuration**
+## Environment Configuration
 
-## **Backend `.env`**
-
+### Backend (`packages/express-app/.env`)
 ```env
+# Multi-pipeline (per dataset)
+PIPELINE_EPSTEIN_BASE_URL=
+PIPELINE_EPSTEIN_AUTHORIZATION_KEY=
+PIPELINE_EPSTEIN_TOKEN=
+
+PIPELINE_JFK_BASE_URL=
+PIPELINE_JFK_AUTHORIZATION_KEY=
+PIPELINE_JFK_TOKEN=
+
+# Legacy single webhook (fallback)
 WEBHOOK_BASE_URL=
-WEBHOOK_API_KEY=
+WEBHOOK_AUTHORIZATION_KEY=
+WEBHOOK_TOKEN=
+
 PORT=3001
 FRONTEND_URL=http://localhost:3000
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-## **Frontend `.env`**
-
+### Frontend (`packages/client/.env`)
 ```env
 VITE_API_URL=http://localhost:3001
+VITE_BACKEND_TYPE=express
 ```
 
 ---
 
-# **5. Coding Style & Standards**
+## Coding Standards (Quick Reference)
 
-These rules override all defaults unless a stricter project linter applies.
+See `.claude/references/code-style.md` for complete guide.
 
-## **5.1 Core Philosophy**
-
-* Code should read like English
-* Prioritize clarity over cleverness
-* Small, focused functions
-* Avoid repetition (DRY)
-* Fail fast — validate early
-* Logic should be explicit, descriptive, and intention-revealing
+- **Error Handling:** Use `Callout.call()` — never try/catch
+- **Logging:** Use logger abstraction — never console.log
+- **Formatting:** Semicolons, tabs, no trailing commas, camelCase files
+- **TypeScript:** Define types, prefer `type` over `interface`, avoid `any`
+- **JSDoc:** Required for all exported functions
+- **Testing:** Run `pnpm test` before completing any code change
 
 ---
 
-# **5.2 Naming Conventions**
+## Adding New Backend Components
 
-### **Variables**
-
-* Descriptive nouns for values: `userId`, `authToken`
-* Booleans start with: `is`, `isNot`
-* No unnecessary abbreviations
-
-### **Functions**
-
-* Use verbs or action statements: `fetchUser`, `extractPayload`
-* Describe exactly what they do
-
-### **Files**
-
-* Use **camelCase**: `userService.ts`, `errorHandler.ts`
+1. Create `packages/express-app/src/api/components/yourComponent/`
+2. Add `routes.ts` exporting an Express router
+3. Add `controller.ts` with business logic
+4. Route auto-mounts at `/api/yourComponent`
 
 ---
 
-# **5.3 Formatting Rules**
+## Additional Documentation
 
-If linter rules don’t apply, Claude defaults to:
+See `.claude/` directory for detailed references:
 
-* Semicolons
-* Tabs for indentation
-* No trailing commas
-* Reasonable line lengths
-* Imports alphabetized and grouped
-* Default export for the primary file function, otherwise named exports
+**Product**
+- `.claude/prd.md` — Product requirements, features, user flows, success metrics
 
----
+**Architecture & Style**
+- `.claude/references/architecture.md` — System architecture and data flow diagrams
+- `.claude/references/code-style.md` — Coding standards, naming, error handling patterns
 
-# **5.4 Helper Function Placement**
+**Commands**
+- `.claude/commands/development.md` — All available pnpm commands
+- `.claude/commands/test.md` — Testing guide, mocking patterns, debugging
+- `.claude/commands/commit.md` — Git workflow, commit message format, branch strategy
 
-* If used across multiple files → move to `/utils`.
-* If only used locally → define **at the top of the file**.
-
----
-
-# **6. Error Handling Rules**
-
-## **6.1 Never Write try/catch**
-
-Claude must use the `callout()` helper:
-
-```ts
-export async function callout(promise: Promise<any>): Promise<any> {
-	return promise.then((data) => [null, data]).catch((err) => [err]);
-}
-```
-
-## **6.2 Always Wrap Errors in an Error Class**
-
-Example:
-
-```ts
-const [err, resp] = await callout(UserService.register(payload));
-
-if (err) {
-	logger.error(err.message);
-	throw new AppError('Failed to register user', 500);
-}
-```
-
-## **6.3 Logging**
-
-* Never use `console.log`
-* Always use the logger abstraction
-* Log as much as needed: function entry/exit, important branches, external calls, and all errors
-
----
-
-# **7. Async & Promise Rules**
-
-* Prefer async/await
-* `Promise.all` acceptable when appropriate
-* Avoid unnecessary `async` functions
-* No `.then/.catch` except internally inside `callout()`
-
----
-
-# **8. TypeScript Rules**
-
-* Always define object types
-* Prefer `type`, use `interface` only when extending
-* Avoid `any` unless truly unavoidable
-* Use generics only when necessary
-* Avoid optional chaining except for deep safe-access
-
----
-
-# **9. Utilities & Structure**
-
-* Use a single `utils` module for small generic helpers
-* Larger domains get their own files (`logger.ts`, `encryption.ts`)
-* Follow single-responsibility principles in every module
-
----
-
-# **10. Comments & Documentation**
-
-## **10.1 JSDoc Required for Every Exported Function**
-
-Use this structure:
-
-```ts
-/**
- * Description
- *
- * @param {type} name - description
- * @return {type} description
- *
- * @example
- *     await functionName(a, b)
- */
-```
-
-## **10.2 Comments Only for Complex Logic**
-
-Clear naming should minimize comment usage.
-
-## **10.3 README Updates**
-
-Add snippets only when environment variables, deployment rules, or usage patterns change.
-
----
-
-# **11. Testing Requirements**
-
-## **11.1 Every New Function Must Have Tests**
-
-* Use `describe → context → it`
-* Stub external calls with sinon
-* For endpoints, use supertest
-
-## **11.2 For Every Code Change**
-
-> **You must run unit tests and fix any failing test or broken logic before completing the change.**
-
-Claude must enforce this rule when writing instructions, code, or reviewing changes.
-
-## **11.3 Test Philosophy**
-
-* Tests should be small and focused
-* Validate both success and error paths
-* Do not test external libraries
-* All mocks/stubs must be explicit
-
----
-
-# **12. Adding New Backend Components**
-
-1. Create a new folder under `app/src/components/yourComponent/`
-2. Add a `routes.ts` that exports an Express router
-3. Add a `controller.ts` with your business logic
-4. The router auto-discovers and mounts it at `/api/yourComponent`
-
----
-
-# **13. Deployment Notes**
-
-* Backend runs on Node with compiled `dist/` output
-* Frontend is a static Vite-built SPA
-* Backend can be deployed via Docker
-* Production builds require `NODE_ENV=production`
-
----
-
-# **14. Summary Rule**
-
-**Claude must always write code as if the Aparavi development team  will maintain it for years: clean, explicit, predictable, type-safe, and readable.**
-
+**File References**
+- `.claude/references/backend.md` — Backend file references and path aliases
+- `.claude/references/chat-core.md` — Shared library exports and usage
+- `.claude/references/frontend.md` — Frontend routes and services
+- `.claude/references/configuration.md` — Config files and environment variables

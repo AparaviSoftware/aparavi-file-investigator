@@ -55,5 +55,3 @@ coverage/
 # pnpm
 .pnpm-debug.log*
 
-# llm directories
-.claude
