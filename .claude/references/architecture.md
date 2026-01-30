@@ -105,9 +105,41 @@ Each dataset has its own webhook configuration via environment variables:
 PIPELINE_{DATASET_ID}_BASE_URL
 PIPELINE_{DATASET_ID}_AUTHORIZATION_KEY
 PIPELINE_{DATASET_ID}_TOKEN
+PIPELINE_{DATASET_ID}_API_KEY          # optional
 ```
 
-The controller selects the appropriate config based on the `datasetId` in the request.
+The controller selects the appropriate config based on the `datasetId` in the request body. Pipeline selection follows this priority:
+
+1. If `datasetId` matches a `PIPELINE_*` config → uses that pipeline
+2. If no match → falls back to legacy `WEBHOOK_*` config
+3. If neither exists → returns HTTP 400
+
+### Chat API Request/Response Format
+
+**Endpoint:** `POST /api/chat`
+
+**Request body:**
+```json
+{
+  "message": "string (optional)",
+  "data": { },
+  "datasetId": "epstein | jfk | ufo | ...",
+  "fingerprint": { }
+}
+```
+Either `message` or `data` is required.
+
+**Success response:**
+```json
+{
+  "success": true,
+  "message": "Response text from the pipeline",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "metadata": { "processingTime": "1234ms" }
+}
+```
+
+**Error codes:** 400 (bad request / no config), 429 (rate limited), 504 (timeout)
 
 ## Frontend Architecture
 

@@ -6,10 +6,11 @@ A full-stack chat interface for interacting with Aparavi data pipelines. This mo
 
 ```
 aparavi-file-investigator/
-├── client/         # React frontend (Vite)
-├── app/            # Express backend server
-├── lambda/         # AWS Lambda function (alternative backend)
-└── package.json    # Monorepo orchestration
+├── packages/
+│   ├── chat-core/      # Shared business logic library
+│   ├── express-app/    # Express backend server
+│   └── client/         # React frontend (Vite)
+└── package.json        # Monorepo orchestration
 ```
 
 ## Prerequisites
@@ -29,20 +30,33 @@ pnpm install
 
 ### 2. Configure Environment Variables
 
-**Backend (`app/.env`):**
+**Backend (`packages/express-app/.env`):**
 ```env
+# Multi-pipeline configuration (per dataset)
+# Format: PIPELINE_{DATASET_ID}_{PROPERTY}
+PIPELINE_EPSTEIN_BASE_URL=https://epstein-pipeline.aparavi.com/api/webhook/endpoint
+PIPELINE_EPSTEIN_AUTHORIZATION_KEY=your-authorization-key
+PIPELINE_EPSTEIN_TOKEN=your-token
+
+PIPELINE_JFK_BASE_URL=https://jfk-pipeline.aparavi.com/api/webhook/endpoint
+PIPELINE_JFK_AUTHORIZATION_KEY=your-authorization-key
+PIPELINE_JFK_TOKEN=your-token
+
+# Legacy single webhook (fallback when no datasetId is provided)
 WEBHOOK_BASE_URL=https://your-aparavi-webhook-url.com
 WEBHOOK_AUTHORIZATION_KEY=your_authorization_key
 WEBHOOK_TOKEN=your_token
+
 PORT=3001
 ```
 
-**Frontend (`client/.env`):**
+**Frontend (`packages/client/.env`):**
 ```env
 VITE_API_URL=http://localhost:3001
+VITE_BACKEND_TYPE=express
 ```
 
-> For detailed environment configuration, see [app/README.md](./app/README.md) and [client/README.md](./client/README.md)
+> For detailed environment configuration, see [packages/express-app/README.md](./packages/express-app/README.md) and [packages/client/README.md](./packages/client/README.md)
 
 ### 3. Start Development Servers
 
@@ -60,8 +74,6 @@ This starts:
 pnpm dev:client
 ```
 
-> See [lambda/README.md](./lambda/README.md) for Lambda deployment instructions
-
 ## Production Deployment
 
 ### Build All
@@ -74,9 +86,8 @@ pnpm build
 
 Each component has specific deployment requirements:
 
-- **Frontend (Static Hosting)**: See [client/README.md](./client/README.md#production-deployment)
-- **Backend (Express/Docker)**: See [app/README.md](./app/README.md#production-deployment)
-- **Backend (Lambda)**: See [lambda/README.md](./lambda/README.md#deployment)
+- **Frontend (Static Hosting)**: See [packages/client/README.md](./packages/client/README.md#production-deployment)
+- **Backend (Express/Docker)**: See [packages/express-app/README.md](./packages/express-app/README.md#production-deployment)
 
 ## Architecture
 
@@ -92,15 +103,32 @@ Browser → Frontend (React/Vite) → Backend (Express) → Aparavi Webhook
 - Self-hosted deployments
 - Traditional server infrastructure
 
-### Lambda Backend (Serverless)
-```
-Browser → Frontend (React/Vite) → AWS Lambda → Aparavi Webhook
+## Testing Pipelines
+
+Once the server is running, you can test individual pipelines using curl:
+
+```bash
+# Test a specific dataset pipeline
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What can you tell me about this?", "datasetId": "epstein"}'
+
+# Test a different dataset
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Search query here", "datasetId": "jfk"}'
+
+# Test legacy webhook fallback (no datasetId)
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Uses default WEBHOOK_* config"}'
 ```
 
-**Use when:**
-- Serverless deployments
-- AWS infrastructure
-- Cost-optimized scaling
+### Pipeline Selection Logic
+
+1. If `datasetId` is provided and a matching `PIPELINE_{DATASET_ID}_*` config exists, that pipeline is used
+2. If no `datasetId` or no matching pipeline, falls back to legacy `WEBHOOK_*` config
+3. If neither exists, returns HTTP 400
 
 ## Available Commands
 
@@ -117,9 +145,9 @@ From root directory:
 
 ## Documentation
 
-- **[Backend (Express)](./app/README.md)** - Express server setup, configuration, and deployment
-- **[Frontend (React)](./client/README.md)** - React app setup, configuration, and deployment
-- **[Lambda Function](./lambda/README.md)** - AWS Lambda deployment and configuration
+- **[Backend (Express)](./packages/express-app/README.md)** - Express server setup, configuration, and deployment
+- **[Frontend (React)](./packages/client/README.md)** - React app setup, configuration, and deployment
+- **[Shared Library](./packages/chat-core/)** - Chat-core shared business logic
 
 ## License
 

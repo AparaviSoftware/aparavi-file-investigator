@@ -21,13 +21,13 @@ React + TypeScript + Vite frontend providing a chat interface for interacting wi
 ### 1. Install Dependencies
 
 ```bash
-cd client
+cd packages/client
 pnpm install
 ```
 
 ### 2. Configure Environment
 
-Create a `.env` file in the `client/` directory:
+Create a `.env` file in the `packages/client/` directory:
 
 ```env
 # For Express backend
@@ -196,16 +196,7 @@ VITE_BACKEND_TYPE=express
 VITE_API_URL=http://localhost:3001
 ```
 
-See [app/README.md](../app/README.md) for backend setup.
-
-### Lambda Backend
-
-```env
-VITE_BACKEND_TYPE=lambda
-VITE_LAMBDA_URL=https://your-function-url.lambda-url.us-east-1.on.aws
-```
-
-See [lambda/README.md](../lambda/README.md) for Lambda deployment.
+See [express-app/README.md](../express-app/README.md) for backend setup.
 
 ## Tech Stack
 

@@ -191,23 +191,29 @@ cd packages/lambda-handler
     "aws-lambda": "^1.0.7"
   }
 }
+```
 
-# Create handler
-# packages/lambda-handler/src/index.ts
+```ts
+// packages/lambda-handler/src/index.ts
 import { ChatService } from '@aparavi/chat-core';
 
 export const handler = async (event) => {
+  const body = JSON.parse(event.body);
+  const { datasetId } = body;
+
+  // Use PIPELINE_{DATASET_ID}_* env vars for multi-pipeline support
+  const prefix = datasetId
+    ? `PIPELINE_${datasetId.toUpperCase()}_`
+    : 'WEBHOOK_';
+
   const webhookConfig = {
-    baseUrl: process.env.WEBHOOK_BASE_URL,
-    authorizationKey: process.env.WEBHOOK_API_KEY,
-    token: process.env.WEBHOOK_TOKEN,
-    timeout: 30000
+    baseUrl: process.env[`${prefix}BASE_URL`] || '',
+    authorizationKey: process.env[`${prefix}AUTHORIZATION_KEY`] || '',
+    token: process.env[`${prefix}TOKEN`] || '',
+    timeout: 300000
   };
 
-  return await ChatService.processChat(
-    JSON.parse(event.body),
-    webhookConfig
-  );
+  return await ChatService.processChat(body, webhookConfig);
 };
 ```
 

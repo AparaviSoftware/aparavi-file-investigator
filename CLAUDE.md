@@ -86,6 +86,7 @@ Shared between Express and future Lambda backends:
 ### Backend (`packages/express-app/.env`)
 ```env
 # Multi-pipeline (per dataset)
+# Format: PIPELINE_{DATASET_ID}_{PROPERTY}
 PIPELINE_EPSTEIN_BASE_URL=
 PIPELINE_EPSTEIN_AUTHORIZATION_KEY=
 PIPELINE_EPSTEIN_TOKEN=
@@ -93,6 +94,10 @@ PIPELINE_EPSTEIN_TOKEN=
 PIPELINE_JFK_BASE_URL=
 PIPELINE_JFK_AUTHORIZATION_KEY=
 PIPELINE_JFK_TOKEN=
+
+PIPELINE_UFO_BASE_URL=
+PIPELINE_UFO_AUTHORIZATION_KEY=
+PIPELINE_UFO_TOKEN=
 
 # Legacy single webhook (fallback)
 WEBHOOK_BASE_URL=
@@ -104,6 +109,21 @@ FRONTEND_URL=http://localhost:3000
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
+
+### Testing Pipelines
+```bash
+# Test a specific dataset pipeline
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What can you tell me?", "datasetId": "epstein"}'
+
+# Test legacy webhook fallback (no datasetId)
+curl -X POST http://localhost:3001/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Uses WEBHOOK_* config"}'
+```
+
+Pipeline selection: `datasetId` → matching `PIPELINE_*` config → legacy `WEBHOOK_*` fallback → HTTP 400.
 
 ### Frontend (`packages/client/.env`)
 ```env
