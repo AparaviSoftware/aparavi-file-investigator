@@ -30,6 +30,11 @@
 		"eslint-plugin-react": "^7.33.2",
 		"eslint-plugin-react-hooks": "^4.6.0"
 	},
+	"pnpm": {
+		"overrides": {
+			"baseline-browser-mapping": ">=2.9.15"
+		}
+	},
 	"engines": {
 		"node": ">=18.0.0",
 		"pnpm": ">=8.0.0"
