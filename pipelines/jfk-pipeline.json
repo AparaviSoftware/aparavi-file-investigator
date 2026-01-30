@@ -1,0 +1,432 @@
+{
+  "components": [
+    {
+      "id": "sample_google_1",
+      "provider": "sample_google",
+      "config": {
+        "actions": {},
+        "mode": "Source",
+        "type": "sample_google",
+        "useSelectMode": "driver",
+        "preselected": {
+          "Audio": false,
+          "Audio_Lite": false,
+          "Epstein_Files": false,
+          "Finance": false,
+          "Finance_Lite": false,
+          "Hackathon": false,
+          "HR": false,
+          "HR_Lite": false,
+          "Images": false,
+          "Images_Lite": false,
+          "John_F_Kennedy_Files": true,
+          "Legal": false,
+          "Legal_Lite": false,
+          "Video": false,
+          "Video_Lite": false
+        },
+        "parameters": {
+          "google": {},
+          "secureParameters": {
+            "secure": [],
+            "token": "ToIyPoSGQk2sB2Mw+p3jh1ZB4yWrI6eNxBHr1v9FxWRSKA=="
+          }
+        }
+      },
+      "ui": {
+        "position": {
+          "x": 160,
+          "y": 220
+        },
+        "measured": {
+          "width": 140,
+          "height": 66
+        },
+        "data": {
+          "provider": "sample_google",
+          "class": "source",
+          "type": "default"
+        },
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "parse_1",
+      "provider": "parse",
+      "config": {
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 360,
+          "y": 160
+        },
+        "measured": {
+          "width": 140,
+          "height": 127
+        },
+        "data": {
+          "provider": "parse",
+          "class": "data",
+          "type": "default"
+        },
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "from": "sample_google_1",
+          "lane": "tags"
+        }
+      ]
+    },
+    {
+      "id": "audio_transcribe_1",
+      "provider": "audio_transcribe",
+      "config": {
+        "profile": "default",
+        "default": {
+          "compute_type": "int8",
+          "max_seconds": 300,
+          "min_seconds": 240,
+          "model": "base",
+          "secureParameters": {
+            "secure": [],
+            "token": "ToIyPoSGQk2sB2Mw+p3jh3tHGn9+T/PedOnz10N+fNOKOA=="
+          },
+          "silence_threshold": 0.25,
+          "vad_level": 1
+        },
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 600,
+          "y": 0
+        },
+        "measured": {
+          "width": 140,
+          "height": 81
+        },
+        "data": {
+          "provider": "audio_transcribe",
+          "class": "audio",
+          "type": "default"
+        },
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "from": "parse_1",
+          "lane": "audio"
+        },
+        {
+          "from": "parse_1",
+          "lane": "video"
+        }
+      ]
+    },
+    {
+      "id": "ocr_1",
+      "provider": "ocr",
+      "config": {
+        "profile": "default",
+        "default": {
+          "engine": "EasyOCR",
+          "language": "en",
+          "secureParameters": {
+            "secure": [],
+            "token": "ToIyPoSGQk2sB2Mw+p3jh/g8/zoM2fxxdLXnRQJl3UDYIQ=="
+          },
+          "table": "Doctr"
+        },
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 600,
+          "y": 160
+        },
+        "measured": {
+          "width": 140,
+          "height": 81
+        },
+        "data": {
+          "provider": "ocr",
+          "class": "image",
+          "type": "default"
+        },
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "from": "parse_1",
+          "lane": "image"
+        }
+      ]
+    },
+    {
+      "id": "preprocessor_langchain_1",
+      "provider": "preprocessor_langchain",
+      "config": {
+        "profile": "default",
+        "default": {
+          "mode": "strlen",
+          "splitter": "RecursiveCharacterTextSplitter"
+        },
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 800,
+          "y": 300
+        },
+        "measured": {
+          "width": 140,
+          "height": 81
+        },
+        "data": {
+          "provider": "preprocessor_langchain",
+          "class": "preprocessor",
+          "type": "default"
+        },
+        "formDataValid": false
+      },
+      "input": [
+        {
+          "from": "parse_1",
+          "lane": "text"
+        },
+        {
+          "from": "ocr_1",
+          "lane": "text"
+        },
+        {
+          "from": "ocr_1",
+          "lane": "table"
+        },
+        {
+          "from": "audio_transcribe_1",
+          "lane": "text"
+        },
+        {
+          "from": "parse_1",
+          "lane": "table"
+        }
+      ]
+    },
+    {
+      "id": "qdrant_2",
+      "provider": "qdrant",
+      "config": {
+        "profile": "cloud",
+        "cloud": {
+          "collection": "jfk-documents-production",
+          "port": 6333,
+          "score": 0.7,
+          "host": "https://e3ebf594-c112-49fd-a717-98f32d77abc1.us-east-1-1.aws.cloud.qdrant.io"
+        },
+        "local": {
+          "collection": "APARAVI",
+          "host": "localhost",
+          "port": 6333,
+          "score": 0.7
+        },
+        "parameters": {
+          "google": {}
+        },
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 1220,
+          "y": 340
+        },
+        "measured": {
+          "width": 140,
+          "height": 96
+        },
+        "data": {
+          "provider": "qdrant",
+          "class": "store",
+          "type": "default"
+        },
+        "formDataValid": false
+      },
+      "input": [
+        {
+          "lane": "documents",
+          "from": "embedding_transformer_2"
+        },
+        {
+          "lane": "questions",
+          "from": "embedding_transformer_2"
+        }
+      ]
+    },
+    {
+      "id": "question_1",
+      "provider": "question",
+      "config": {
+        "profile": "default",
+        "default": {
+          "secureParameters": {
+            "secure": [],
+            "token": "ToIyPoSGQk2sB2Mw+p3jh8znyTYK0/qo2ixSPST9w0mgFQ=="
+          }
+        },
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 380,
+          "y": 480
+        },
+        "measured": {
+          "width": 140,
+          "height": 66
+        },
+        "data": {
+          "provider": "question",
+          "class": "text",
+          "type": "default"
+        },
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "from": "webhook_1",
+          "lane": "text"
+        }
+      ]
+    },
+    {
+      "id": "webhook_1",
+      "provider": "webhook",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {
+          "secureParameters": {
+            "secure": [],
+            "token": "ToIyPoSGQk2sB2Mw+p3jh7pgkNSMD+oot7LtTTeSkMH2sA=="
+          }
+        },
+        "type": "webhook"
+      },
+      "ui": {
+        "position": {
+          "x": 160,
+          "y": 420
+        },
+        "measured": {
+          "width": 140,
+          "height": 127
+        },
+        "data": {
+          "provider": "webhook",
+          "class": "source",
+          "type": "default"
+        },
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "response_1",
+      "provider": "response",
+      "config": {
+        "lanes": [],
+        "type": null
+      },
+      "ui": {
+        "position": {
+          "x": 1620,
+          "y": 340
+        },
+        "measured": {
+          "width": 140,
+          "height": 173
+        },
+        "data": {
+          "provider": "response",
+          "class": "infrastructure",
+          "type": "default"
+        },
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "llm_openai_2"
+        }
+      ]
+    },
+    {
+      "id": "embedding_transformer_2",
+      "provider": "embedding_transformer",
+      "config": {
+        "profile": "bge-base"
+      },
+      "ui": {
+        "position": {
+          "x": 1020,
+          "y": 360
+        },
+        "measured": {
+          "width": 140,
+          "height": 81
+        },
+        "data": {
+          "provider": "embedding_transformer",
+          "class": "embedding",
+          "type": "default"
+        },
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "question_1"
+        },
+        {
+          "lane": "documents",
+          "from": "preprocessor_langchain_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_openai_2",
+      "provider": "llm_openai",
+      "config": {
+        "profile": "openai-4o",
+        "openai-4o": {},
+        "parameters": {
+          "google": {}
+        }
+      },
+      "ui": {
+        "position": {
+          "x": 1420,
+          "y": 380
+        },
+        "measured": {
+          "width": 140,
+          "height": 66
+        },
+        "data": {
+          "provider": "llm_openai",
+          "class": "llm",
+          "type": "default"
+        },
+        "formDataValid": false
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "qdrant_2"
+        }
+      ]
+    }
+  ],
+  "servicesVersion": 1,
+  "id": "c22590b7-dbec-447a-8565-1742cc04f97f"
+}
