@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm info:*)",
+      "Bash(npx npm-remote-ls:*)",
+      "Bash(pnpm dlx:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm update:*)",
+      "Bash(powershell:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
