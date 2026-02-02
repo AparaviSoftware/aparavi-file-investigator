@@ -105,7 +105,6 @@ Each dataset has its own webhook configuration via environment variables:
 PIPELINE_{DATASET_ID}_BASE_URL
 PIPELINE_{DATASET_ID}_AUTHORIZATION_KEY
 PIPELINE_{DATASET_ID}_TOKEN
-PIPELINE_{DATASET_ID}_API_KEY          # optional
 ```
 
 The controller selects the appropriate config based on the `datasetId` in the request body. Pipeline selection follows this priority:

@@ -64,7 +64,6 @@ LOG_LEVEL=info
 | `PIPELINE_{ID}_BASE_URL` | Yes | Webhook endpoint URL |
 | `PIPELINE_{ID}_AUTHORIZATION_KEY` | Yes | Authorization key |
 | `PIPELINE_{ID}_TOKEN` | Yes | Authentication token |
-| `PIPELINE_{ID}_API_KEY` | No | Optional API key |
 
 Each pipeline has a default timeout of 300,000ms (5 minutes). At least one configuration source is required — either `PIPELINE_*` or `WEBHOOK_*` variables.
 
