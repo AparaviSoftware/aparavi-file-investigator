@@ -4,7 +4,6 @@
 
 export interface PipelineConfig {
 	baseUrl: string;
-	apiKey: string;
 	authorizationKey: string;
 	token: string;
 	timeout: number;
@@ -18,7 +17,6 @@ export interface Config {
 	};
 	webhook: {
 		baseUrl: string;
-		apiKey: string;
 		authorizationKey: string;
 		token: string;
 		timeout: number;

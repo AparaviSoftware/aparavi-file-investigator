@@ -34,7 +34,6 @@ function loadPipelineConfigs(): Record<string, PipelineConfig> {
 		const prefix = `PIPELINE_${datasetId.toUpperCase()}_`;
 		pipelines[datasetId] = {
 			baseUrl: process.env[`${prefix}BASE_URL`] || '',
-			apiKey: process.env[`${prefix}API_KEY`] || '',
 			authorizationKey: process.env[`${prefix}AUTHORIZATION_KEY`] || '',
 			token: process.env[`${prefix}TOKEN`] || '',
 			timeout
@@ -54,7 +53,6 @@ const config: Config = {
 
 	webhook: {
 		baseUrl: process.env.WEBHOOK_BASE_URL || '',
-		apiKey: process.env.WEBHOOK_API_KEY || '',
 		authorizationKey: process.env.WEBHOOK_AUTHORIZATION_KEY || '',
 		token: process.env.WEBHOOK_TOKEN || '',
 		timeout: 300000 // 5 minutes
