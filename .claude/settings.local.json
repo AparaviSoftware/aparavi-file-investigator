@@ -8,7 +8,9 @@
       "Bash(pnpm update:*)",
       "Bash(powershell:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm lint:*)"
     ]
   }
 }
